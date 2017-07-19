@@ -6,18 +6,15 @@ const tokens = esprima.tokenize(source);
 var identificadores = tokens.filter(function (el) {
     return (el.type === "Identifier");
 });
+
 console.log("El código es: ");
 console.log(source);
+
 //console.log("Los identificadores son: ");
 //console.log(identificadores);
-function arrayObjectIndexOf(myArray, searchTerm, property) {
-    for(var i = 0, len = myArray.length; i < len; i++) {
-        if (myArray[i][property] === searchTerm) return i;
-    }
-    return -1;
-}
+
 var armarArray = [];
-console.log("El array de Identificadores es: ");
+
 identificadores.forEach(function (element) {
     var indice = arrayObjectIndexOf(armarArray,element.value, "id");
     if(indice == -1){ // No encontró el identificador, lo agrega.
@@ -27,7 +24,15 @@ identificadores.forEach(function (element) {
     }
 });
 
+console.log("El array de Identificadores es: ");
 console.log(armarArray);
+
+function arrayObjectIndexOf(myArray, searchTerm, property) {
+    for(var i = 0, len = myArray.length; i < len; i++) {
+        if (myArray[i][property] === searchTerm) return i;
+    }
+    return -1;
+}
 
 function Identifier(id, quantity) {
     this.id = id;
