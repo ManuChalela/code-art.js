@@ -1,0 +1,28 @@
+{
+  "name": "code-art.js",
+  "version": "0.0.1",
+  "description": "Node module parser that creates a word cloud of code identifiers. ",
+  "main": "code-art.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ManuChalela/code-art.js.git"
+  },
+  "keywords": [
+    "word-cloud",
+    "parser",
+    "javascript"
+  ],
+  "author": "emanuelchalela@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ManuChalela/code-art.js/issues"
+  },
+  "homepage": "https://github.com/ManuChalela/code-art.js#readme",
+  "dependencies": {
+	  "esprima": "~4.0.0",
+	  "word-cloud": "~0.0.3"
+  }
+}
