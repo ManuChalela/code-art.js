@@ -22,7 +22,14 @@
   },
   "homepage": "https://github.com/ManuChalela/code-art.js#readme",
   "dependencies": {
-	  "esprima": "~4.0.0",
-	  "word-cloud": "~0.0.3"
+    "d3": "~4.10.0",
+    "d3-cloud": "^1.2.4",
+    "d3-node": "^1.0.3",
+    "esprima": "~4.0.0",
+    "word-cloud": "~0.0.3"
+  },
+  "devDependencies": {
+    "browserify": "^14.4.0",
+    "svg2png": "^4.1.1"
   }
 }
