@@ -26,6 +26,7 @@
     "d3-cloud": "^1.2.4",
     "d3-node": "^1.0.3",
     "esprima": "~4.0.0",
+    "js2wordcloud": "^1.1.12",
     "word-cloud": "~0.0.3"
   },
   "devDependencies": {
