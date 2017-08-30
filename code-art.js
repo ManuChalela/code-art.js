@@ -1,15 +1,25 @@
+const fs = require('fs');
 const esprima = require('esprima');
-var code = require('d3');
+const estraverse = require('estraverse');
+
+var filename = process.argv[2];
+console.log('Processing', filename);
+var ast = esprima.parse(fs.readFileSync(filename));
+estraverse.traverse(ast, {
+    enter: function(node){
+        if (node.type === 'AssignmentExpression'){
+            console.log('Encountered assignment to', node.left.name);
+        }
+    }
+});
+const espree = require('espree');
 var source = 'answer = 42; hola = 5; isCold = "Si"; answer = 50;';
 const tokens = esprima.tokenize(source);
-var module = esprima.parseModule('const d3 = require(\'d3\');');
-console.log(module);
+
 var identificadores = tokens.filter(function (el) {
     return (el.type === "Identifier");
 });
 
-console.log("El código es: ");
-console.log(source);
 var listIdentifiers = [];
 identificadores.forEach(function (element) {
     var indice = arrayObjectIndexOf(listIdentifiers,element.value, "id");
@@ -21,9 +31,6 @@ identificadores.forEach(function (element) {
     }
 });
 
-// console.log("El array de Identificadores es: ");
-// console.log(listIdentifiers);
-// console.log("listIdentifiers");
 function arrayObjectIndexOf(myArray, searchTerm, property) {
     for(var i = 0, len = myArray.length; i < len; i++) {
         if (myArray[i][property] === searchTerm) return i;
@@ -47,16 +54,13 @@ var ast2 = esprima.parse(source2);
 var scopeChain = [];
 var assignments = [];
 var source3 = 'd3';
-//var ast3 = espree.parse(source3,{ sourceType: "module"});
+var ast3 = espree.parse(source3,{ sourceType: "module"});
 // var ast3 = esprima.parse(source3);
-//console.log(ast3)
-/*
-var code4 = 'var a = 1; var b = f(); function f(){ var c = 5; return c; } var modulee = require(\'fs\');';
-estraverse.traverse(code4, {
+console.log(ast3)
+estraverse.traverse(ast2, {
     enter: enter,
     leave: leave
 });
-console.log(ast4);
 
 function enter(node){
     if (createsNewScope(node)){
@@ -102,4 +106,3 @@ function createsNewScope(node){
         node.type === 'FunctionExpression' ||
         node.type === 'Program';
 }
-*/

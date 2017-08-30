@@ -8,72 +8,44 @@
 <!-- <h1>Code Art JS</h1> -->
 <div id="container" style="height: 400px;"></div>
 <!-- <h1>Wordcloud</h1> -->
-<!-- <div id="container1" style="height: 400px;"></div> -->
 <script src="node_modules/js2wordcloud/dist/js2wordcloud.js"></script>
-<script src="https://unpkg.com/esprima@~3.1/dist/esprima.js"></script>
-<script>
-//    require(['esprima'], function (parser) {
-//        var source = 'answer = 42; hola = 5; isCold = "Si"; answer = 50;';
-//        const tokens = esprima.tokenize(source);
-//        var identificadores = tokens.filter(function (el) {
-//            return (el.type === "Identifier");
-//        });
-//
-//        console.log("El código es: ");
-//        console.log(source);
-//        //var armarArray = [];
-//        var listIdentifiers = [];
-//        identificadores.forEach(function (element) {
-//            //var indice = arrayObjectIndexOf(armarArray,element.value, "id");
-//            var indice = arrayObjectIndexOf(listIdentifiers,element.value, "id");
-//            if(indice == -1){ // No encontró el identificador, lo agrega.
-//                //      armarArray.push(new Identifier(element.value,1));
-//                var list = [element.value, 1];
-//                listIdentifiers.push.apply(listIdentifiers, list);
-//            } else { // Encontró el identificador, suma uno.
-//                //    armarArray[indice].quantity++;
-//                listIdentifiers[indice].size++;
-//            }
-//        });
-//
-//        console.log("El array de Identificadores es: ");
-//        console.log(listIdentifiers);
-//        console.log("listIdentifiers");
-//        function arrayObjectIndexOf(myArray, searchTerm, property) {
-//            for(var i = 0, len = myArray.length; i < len; i++) {
-//                if (myArray[i][property] === searchTerm) return i;
-//            }
-//            return -1;
-//        }
-//
-//        function Identifier(id, quantity) {
-//            this.id = id;
-//            this.quantity = quantity;
-//        }
-//
-//        function Item (id, size){
-//            this.id = id;
-//            this.size = size;
-//        }
-//        console.log(listIdentifiers);
-//    });
+<script src="https://unpkg.com/esprima@~4.0/dist/esprima.js"></script>
+<script src="new_code_.js"></script>
+<script type="text/javascript">
+//    var requirejs = require('requirejs');
+    require(['esprima'], function (parser) {
+    // Do something with parser, e.g.
+    var sourcee = 'answer = 42; hola = 5; isCold = "Si"; answer = 50;';
+    const tokenss = parser.tokenize(sourcee);
+    var identificadoress = tokenss.filter(function (el) {
+        return (el.type === "Identifier");
+    });
+    console.log(identificadoress);
+//    var syntax = parser.parse('var answer = 42');
+//    console.log(JSON.stringify(syntax, null, 4));
+});
 
-    var option = {
-        tooltip: {
-            show: true,
-            formatter: function(item) {
-                return item[0] + ': ' + item[1] + '<br>' + ''
-            }
-        },
+var option;
+option = {
+    tooltip: {
+        show: true,
+        formatter: function (item) {
+            return item[0] + ': ' + item[1] + '<br>' + ''
+        }
+    },
         list: [['name',38], ['false',38], ['var',28], ['rstudio',26], ['true',22], ['url',20], ['server',20], ['wordcloud',15], ['virtual',15],
             ['target',14], ['key',14], ['google',13], ['null',12], ['data',12], ['linux',11], ['function',10], ['postid',8], ['posts',8], ['twitter',8],
             ['blog',8], ['facebook',8], ['comments',8], ['machine',7], ['environment',5], ['ubuntu',5], ['password',5], ['ssh',5],
             ['draws',5], ['sans',4]],
-       // list: listIdentifiers,
-        color: '#15a4fa',
-        shape: 'circle',
-        ellipticity: 1
-    }
+    // list: listIdentifiers,
+//    list: armarArray.forEach(function (elem) {
+//
+//    })
+
+    color: '#15a4fa',
+    shape: 'circle',
+    ellipticity: 1
+};
     var wc = new Js2WordCloud(document.getElementById('container'))
     wc.showLoading({
         backgroundColor: '#fff',
@@ -110,12 +82,6 @@
             }
         }
     }
-    var wc1 = new Js2WordCloud(document.getElementById('container1'))
-    wc1.showLoading()
-    setTimeout(function() {
-        wc1.hideLoading()
-        wc1.setOption(option1)
-    }, 2000)
 
     var option8 = {
         tooltip: {
@@ -127,13 +93,9 @@
         list: [['Al', 500000], ['fin', 50], ['pude', 40]],
         color: 'red'
     }
-    setTimeout(function() {
-        wc1.setOption(option8)
-    }, 4000)
 
     window.onresize = function() {
-        wc.resize()
-        wc1.resize()
+        wc.resize();
     }
 </script>
 </body>

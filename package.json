@@ -25,12 +25,15 @@
     "d3": "~4.10.0",
     "d3-cloud": "^1.2.4",
     "d3-node": "^1.0.3",
+    "espree": "^3.5.0",
     "esprima": "~4.0.0",
+    "fs": "0.0.1-security",
     "js2wordcloud": "^1.1.12",
     "word-cloud": "~0.0.3"
   },
   "devDependencies": {
     "browserify": "^14.4.0",
+    "requirejs": "^2.3.5",
     "svg2png": "^4.1.1"
   }
 }
