@@ -3,9 +3,7 @@
   "version": "0.0.1",
   "description": "Node module parser that creates a word cloud of code identifiers. ",
   "main": "code-art.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ManuChalela/code-art.js.git"
@@ -22,19 +20,12 @@
   },
   "homepage": "https://github.com/ManuChalela/code-art.js#readme",
   "dependencies": {
-    "d3": "~4.10.0",
-    "d3-cloud": "^1.2.4",
-    "d3-node": "^1.0.3",
-    "espree": "^3.5.0",
     "esprima": "~4.0.0",
-    "js2wordcloud": "^1.1.12",
-    "word-cloud": "~0.0.3"
+    "js2wordcloud": "^1.1.12"
   },
   "devDependencies": {
     "browserify": "^14.4.0",
     "estraverse": "^4.2.0",
-    "fs": "0.0.1-security",
-    "requirejs": "^2.3.5",
-    "svg2png": "^4.1.1"
+    "requirejs": "^2.3.5"
   }
 }
