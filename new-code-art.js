@@ -1,4 +1,3 @@
-//const espree = require('espree');
 var source = 'var answer = 42; var hola = 5; var isCold = "Si"; answer = 50;';
 var sourceR = 'var fs = require(\'fs\');'
 var sourceJS = 'function radToDeg(num) {\n' +
@@ -2431,7 +2430,7 @@ function printRequiresModules(){
     console.log(requiresModules);
 }
 
-printRequiresModules();
+//printRequiresModules();
 // console.log("Variables Total: ");
 // console.log(variablesTotal);
 
