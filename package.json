@@ -20,12 +20,13 @@
   },
   "homepage": "https://github.com/ManuChalela/code-art.js#readme",
   "dependencies": {
-    "esprima": "~4.0.0",
     "js2wordcloud": "^1.1.12"
   },
   "devDependencies": {
     "browserify": "^14.4.0",
+    "esprima": "^4.0.0",
     "estraverse": "^4.2.0",
+    "fs": "0.0.1-security",
     "requirejs": "^2.3.5"
   }
 }
