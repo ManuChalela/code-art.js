@@ -1,49 +1,3 @@
-//const esprima = require('esprima');
-//const tokens = esprima.tokenize(source);
-
-// var identificadores = tokens.filter(function (el) {
-//     return (el.type === "Identifier");
-// });
-
-// var listIdentifiers = [];
-// identificadores.forEach(function (element) {
-//     var indice = arrayObjectIndexOf(listIdentifiers,element.value, "id");
-//     if(indice == -1){ // No encontró el identificador, lo agrega.
-//         var list = [element.value, 1];
-//         listIdentifiers.push.apply(listIdentifiers, list);
-//     } else { // Encontró el identificador, suma uno.
-//         listIdentifiers[indice].size++;
-//     }
-// });
-// var armarArray = [];
-// identificadores.forEach(function (element) {
-//     var indice = arrayObjectIndexOf(armarArray,element.value, "id");
-//     if(indice == -1){ // No encontró el identificador, lo agrega.
-//         armarArray.push(new Identifier(element.value,1));
-//     } else { // Encontró el identificador, suma uno.
-//         armarArray[indice].quantity++;
-//     }
-// });
-//
-// console.log(armarArray);
-//
-// function arrayObjectIndexOf(myArray, searchTerm, property) {
-//     for(var i = 0, len = myArray.length; i < len; i++) {
-//         if (myArray[i][property] === searchTerm) return i;
-//     }
-//     return -1;
-// }
-//
-// function Identifier(id, quantity) {
-//     this.id = id;
-//     this.quantity = quantity;
-// }
-//
-// function Item (id, size){
-//     this.id = id;
-//     this.size = size;
-// }
-
 var fs = require('fs');
 var esprima = require('esprima');
 var estraverse = require('estraverse');
@@ -58,9 +12,6 @@ catch (e) {
   console.log(e);
 }
 var ast = esprima.parse(data, {loc: true, comment: true});
-// source, sourceR, sourceJS, sourceAngular, sourceNode, sourceThinkJS
-
-//var ast = esprima.parse(sourceAngular, {loc: true, comment: true});
 var scopeChain = [];
 var assignments = [];
 var requiresModules = [];
@@ -133,7 +84,7 @@ function checkForLeaks(assignments, scopeChain, functionList){
 function updateGlobal(varname, globals){
   console.log("varname " + varname);
   console.log("globals " + globals);
-  globals.push(varname);
+  //globals.push(varname);
 }
 
 function createsNewScope(node){
@@ -174,3 +125,50 @@ function processVariablesTotal(variablesTotal){
     console.log(count);
 }
 processVariablesTotal(variablesTotal);
+
+
+//const esprima = require('esprima');
+//const tokens = esprima.tokenize(source);
+
+// var identificadores = tokens.filter(function (el) {
+//     return (el.type === "Identifier");
+// });
+
+// var listIdentifiers = [];
+// identificadores.forEach(function (element) {
+//     var indice = arrayObjectIndexOf(listIdentifiers,element.value, "id");
+//     if(indice == -1){ // No encontró el identificador, lo agrega.
+//         var list = [element.value, 1];
+//         listIdentifiers.push.apply(listIdentifiers, list);
+//     } else { // Encontró el identificador, suma uno.
+//         listIdentifiers[indice].size++;
+//     }
+// });
+// var armarArray = [];
+// identificadores.forEach(function (element) {
+//     var indice = arrayObjectIndexOf(armarArray,element.value, "id");
+//     if(indice == -1){ // No encontró el identificador, lo agrega.
+//         armarArray.push(new Identifier(element.value,1));
+//     } else { // Encontró el identificador, suma uno.
+//         armarArray[indice].quantity++;
+//     }
+// });
+//
+// console.log(armarArray);
+//
+// function arrayObjectIndexOf(myArray, searchTerm, property) {
+//     for(var i = 0, len = myArray.length; i < len; i++) {
+//         if (myArray[i][property] === searchTerm) return i;
+//     }
+//     return -1;
+// }
+//
+// function Identifier(id, quantity) {
+//     this.id = id;
+//     this.quantity = quantity;
+// }
+//
+// function Item (id, size){
+//     this.id = id;
+//     this.size = size;
+// }
