@@ -3,8 +3,8 @@ var fs = require('fs');
 var esprima = require('esprima');
 var estraverse = require('estraverse');
 
-//var filename = process.argv[2];
-var filename = 'test\\sourceSumar.js';
+var filename = process.argv[2];
+//var filename = 'test\\sourceSumar.js';
 console.log('Processing', filename);
 try {
   var data = fs.readFileSync(filename, 'utf8');
@@ -25,11 +25,6 @@ estraverse.traverse(ast, {
     leave: leave
 });
 
-function processRequires(node) {
-    if (node.init != null&& node.init.type != null && node.init.type === 'CallExpression' && node.init.callee.name === 'require') {
-        requiresModules.push(node.id.name);
-    }
-}
 function Locals(name){
   this.name = name;
 }
@@ -41,24 +36,29 @@ function enter(node){
    // console.log(node);
     if (node.type === 'VariableDeclarator'){
         var currentScope = scopeChain[scopeChain.length - 1];
+        console.log("currentScope: " + currentScope);
         var name = node.id.name;
+        var nameGlobal;
+        if(!isVarDefined(name, scopeChain))
+          nameGlobal = 'global';
         currentScope.push(name);
         variablesTotal.push(name);
         var locals = new Locals(name);
         var globals = [];
         var externals = [];
-        var itemFunction = new ItemFunction(name, locals, globals, externals);
+        if(nameGlobal === 'Undefined')
+          var itemFunction = new ItemFunction(name, locals, globals, externals);
+          else
+          var itemFunction = new ItemFunction(nameGlobal, locals, globals, externals);
         //functionList.push([node.id.name,locals,globals,externals]);
         console.log(itemFunction);
         functionList.push(itemFunction);
-        processRequires(node);
     }
     if (node.type === 'AssignmentExpression'){
         assignments.push(node);
-        processRequires(node);
     }
     if(node.type === 'CallExpression'){
-/*
+      /*
       var currentScope = scopeChain[scopeChain.length - 1];
       //console.log(node);
       var name = node.callee.name;
@@ -175,6 +175,30 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
    console.log("functionList: " + JSON.stringify(functionList));
 }
 
+function addExternalToItemFunction(nameItemFunction, nameExternal, functionList){
+  functionList.forEach(function(element){
+        var indice = arrayObjectIndexOf(functionList,nameItemFunction, "name");
+        if(indice == -1){ // No encontró el nombre
+           console.log("no encontró nameItemFunction externals !");
+           var itemVariable = new ItemVariable(nameExternal);
+           var locals = [];
+           var globals = [];
+           var externals = [];
+           var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
+           itemFunction.externals.push(itemVariable);
+           //functionList[indice].externals.push(itemVariable);
+           functionList.push(itemFunction);
+           console.log("externals lo agrega");
+         //  console.log("functionList: " + functionList);
+        } else { // Encontró el nombre
+          console.log("encontró nameItemFunction externals !");
+          var itemVariable = new ItemVariable(nameExternal);
+          functionList[indice].externals.push(itemVariable);
+          //  console.log("functionList: " + functionList);
+        }
+  });
+}
+
 function leave(node){
     if (createsNewScope(node)){
         checkForLeaks(assignments, scopeChain, functionList);
@@ -244,16 +268,6 @@ function printScope(scope, node){
     }
 }
 
-function printRequiresModules(){
-    console.log("requireModules = ");
-    console.log(requiresModules);
-}
-
-//printRequiresModules();
-// console.log("Variables Total: ");
-// console.log(variablesTotal);
-
-
 function processVariablesTotal(variablesTotal){
     var count = {};
     variablesTotal.forEach(function(i) { count[i] = (count[i]||0)+1;  });
@@ -262,48 +276,9 @@ function processVariablesTotal(variablesTotal){
 processVariablesTotal(variablesTotal);
 
 
-//const esprima = require('esprima');
-//const tokens = esprima.tokenize(source);
-
-// var identificadores = tokens.filter(function (el) {
-//     return (el.type === "Identifier");
-// });
-
-// var listIdentifiers = [];
-// identificadores.forEach(function (element) {
-//     var indice = arrayObjectIndexOf(listIdentifiers,element.value, "id");
-//     if(indice == -1){ // No encontró el identificador, lo agrega.
-//         var list = [element.value, 1];
-//         listIdentifiers.push.apply(listIdentifiers, list);
-//     } else { // Encontró el identificador, suma uno.
-//         listIdentifiers[indice].size++;
-//     }
-// });
-// var armarArray = [];
-// identificadores.forEach(function (element) {
-//     var indice = arrayObjectIndexOf(armarArray,element.value, "id");
-//     if(indice == -1){ // No encontró el identificador, lo agrega.
-//         armarArray.push(new Identifier(element.value,1));
-//     } else { // Encontró el identificador, suma uno.
-//         armarArray[indice].quantity++;
-//     }
-// });
-//
-// console.log(armarArray);
-//
 function arrayObjectIndexOf(myArray, searchTerm, property) {
     for(var i = 0, len = myArray.length; i < len; i++) {
         if (myArray[i][property] === searchTerm) return i;
     }
     return -1;
 }
-//
-// function Identifier(id, quantity) {
-//     this.id = id;
-//     this.quantity = quantity;
-// }
-//
-// function Item (id, size){
-//     this.id = id;
-//     this.size = size;
-// }
