@@ -43,35 +43,45 @@ function enter(node){
           nameGlobal = 'global';
         currentScope.push(name);
         variablesTotal.push(name);
-        var locals = new Locals(name);
-        var globals = [];
-        var externals = [];
-        if(nameGlobal === 'Undefined')
-          var itemFunction = new ItemFunction(name, locals, globals, externals);
-          else
-          var itemFunction = new ItemFunction(nameGlobal, locals, globals, externals);
+        //var locals = new Locals(name);
+        //var globals = [];
+        //var externals = [];
+        if(nameGlobal === 'undefined' || nameGlobal === 'null'){
+          //var itemFunction = new ItemFunction(name, locals, globals, externals);
+          addVarToItemFunction(name, name, 'locals', functionList);
+        } else {
+          //var itemFunction = new ItemFunction(nameGlobal, locals, globals, externals);
+          addVarToItemFunction(nameGlobal, name, 'globals', functionList);
+        }
         //functionList.push([node.id.name,locals,globals,externals]);
-        console.log(itemFunction);
-        functionList.push(itemFunction);
+        //console.log(itemFunction);
+        //functionList.push(itemFunction);
     }
     if (node.type === 'AssignmentExpression'){
         assignments.push(node);
     }
     if(node.type === 'CallExpression'){
-      /*
       var currentScope = scopeChain[scopeChain.length - 1];
-      //console.log(node);
-      var name = node.callee.name;
+    //  console.log(node);
+      // var name = node.callee.name;
+      var nameExternal = node.callee.object.name;
+      var nameGlobal;
+      if(!isVarDefined(name, scopeChain))
+        nameGlobal = 'global';
       currentScope.push(name);
       variablesTotal.push(name);
-      var locals = [];
-      var globals = [];
-      var externals = [];
-      var itemFunction = new ItemFunction(name, locals,globals,externals);
-      functionList.push([name,locals,globals,externals]);
+      // var locals = [];
+      // var globals = [];
+      // var externals = [];
+      // var itemFunction = new ItemFunction(name, locals,globals,externals);
+      // functionList.push([name,locals,globals,externals]);
       //console.log(itemFunction);
-      functionList.push(itemFunction);
-      */
+      // functionList.push(itemFunction);
+      if(nameGlobal === 'undefined' || nameGlobal === 'null'){
+        addExternalToItemFunction(name, nameExternal, functionList);
+      } else {
+        addExternalToItemFunction(nameGlobal, nameExternal, functionList);
+      }
     }
 }
 
@@ -176,6 +186,7 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
 }
 
 function addExternalToItemFunction(nameItemFunction, nameExternal, functionList){
+    console.log("addExternalToItemFunction "+ JSON.stringify([nameItemFunction, nameExternal, functionList]));//FIXME
   functionList.forEach(function(element){
         var indice = arrayObjectIndexOf(functionList,nameItemFunction, "name");
         if(indice == -1){ // No encontró el nombre
