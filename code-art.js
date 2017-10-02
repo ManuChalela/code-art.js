@@ -36,7 +36,7 @@ function enter(node){
    // console.log(node);
     if (node.type === 'VariableDeclarator'){
         var currentScope = scopeChain[scopeChain.length - 1];
-        console.log("currentScope: " + currentScope);
+        //console.log("currentScope: " + currentScope);
         var name = node.id.name;
         var nameGlobal;
         if(!isVarDefined(name, scopeChain))
@@ -48,10 +48,10 @@ function enter(node){
         //var externals = [];
         if(nameGlobal === 'undefined' || nameGlobal === 'null'){
           //var itemFunction = new ItemFunction(name, locals, globals, externals);
-          addVarToItemFunction(name, name, 'locals', functionList);
+      //    addVarToItemFunction(name, name, 'locals', functionList);
         } else {
           //var itemFunction = new ItemFunction(nameGlobal, locals, globals, externals);
-          addVarToItemFunction(nameGlobal, name, 'globals', functionList);
+        //  addVarToItemFunction(nameGlobal, name, 'globals', functionList);
         }
         //functionList.push([node.id.name,locals,globals,externals]);
         //console.log(itemFunction);
@@ -117,12 +117,11 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
             if(indice == -1){ // No encontró el nombre
                   console.log("no encontró locals !");
                   var itemVariable = new ItemVariable(nameVariable);
+			            itemFunction.locals.push(itemVariable);
 			            var locals = [];
 			            var globals = [];
 			            var externals = [];
 			            var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
-			            itemFunction.locals.push(itemVariable);
-			            //functionList[indice].locals.push(itemVariable);
 			            functionList.push(itemFunction);
                   console.log("locals lo agrega");
                   console.log("functionList: " + functionList);
@@ -257,6 +256,9 @@ function createsNewScope(node){
 }
 
 function printScope(scope, node){
+  // console.log("printScope node: ");
+  // console.log(node);
+    console.log("scope: " + scope);
     var varsDisplay = scope.join(', ');
     if (node.type === 'Program'){
         console.log('Variables declared in the global scope:',
@@ -270,7 +272,7 @@ function printScope(scope, node){
             //console.log(node);
             for(i=0; i < node.params.length;i++){
                 var varname = node.params[i].name;
-              //  addVarToItemFunction(nameItemFunction, varname, 'locals', functionList);
+              addVarToItemFunction(nameItemFunction, varname, 'locals', functionList);
             }
         }else{
             console.log('Variables declared in anonymous function:',
