@@ -19,7 +19,7 @@ var assignments = [];
 var requiresModules = [];
 var variablesTotal = [];
 var functionList = [];
-
+var namesExternals = [];
 estraverse.traverse(ast, {
     enter: enter,
     leave: leave
@@ -69,13 +69,15 @@ function enter(node){
         nameGlobal = 'global';
       currentScope.push(name);
       variablesTotal.push(name);
-      console.log("name is: " + name);
-      console.log("nameGlobal is: " + nameGlobal);
+      //console.log("name is: " + name);
+      //console.log("nameGlobal is: " + nameGlobal);
       if(nameGlobal === 'undefined' || nameGlobal === 'null'){
-        addExternalToItemFunction(name, nameExternal, functionList);
+        //addExternalToItemFunction(name, nameExternal, functionList);
       } else {
-        addExternalToItemFunction(nameGlobal, nameExternal, functionList);
+        //addExternalToItemFunction(nameGlobal, nameExternal, functionList);
+
       }
+      namesExternals.push(nameExternal);
     }
 }
 
@@ -118,7 +120,7 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
 			            var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
 			            functionList.push(itemFunction);
                   console.log("locals lo agrega");
-                  console.log("functionList: " + JSON.stringify(functionList));
+                  //console.log("functionList: " + JSON.stringify(functionList));
             } else { // Encontró el nombre
                   console.log("encontró locals !");
                   var itemVariable = new ItemVariable(nameVariable);
@@ -140,7 +142,7 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
                //functionList[indice].globals.push(itemVariable);
 			   functionList.push(itemFunction);
                console.log("globals lo agrega.");
-               console.log("functionList: " + JSON.stringify(functionList));
+              // console.log("functionList: " + JSON.stringify(functionList));
             } else { // Encontró el nombre
                console.log("encontró globals !");
                var itemVariable = new ItemVariable(nameVariable);
@@ -173,35 +175,80 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
       console.log(nameItemFunction +" ! "+ type);
     }
   }
-   console.log("functionList: " + JSON.stringify(functionList));
+  // console.log("functionList: " + JSON.stringify(functionList));
+}
+function addExternalToFunction(nameItemFunction, namesExternals, functionList){
+  if(functionList === undefined){
+    functionList.forEach(function(element){
+          var indice = arrayObjectIndexOf(functionList,nameItemFunction, "name");
+          if(indice == -1){ // No encontró el nombre
+             console.log("no encontró nameItemFunction externals !");
+             namesExternals.forEach(function(nameExternal){
+               var itemVariable = new ItemVariable(nameExternal);
+               var locals = [];
+               var globals = [];
+               var externals = [];
+               var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
+               itemFunction.externals.push(itemVariable);
+               //functionList[indice].externals.push(itemVariable);
+               functionList.push(itemFunction);
+               console.log("externals lo agrega");
+               console.log(JSON.stringify(functionList));
+             });
+           //  console.log("functionList: " + functionList);
+          } else { // Encontró el nombre
+            console.log("encontró nameItemFunction externals !");
+            namesExternals.forEach(function(nameExternal){
+              var itemVariable = new ItemVariable(nameExternal);
+              functionList[indice].externals.push(itemVariable);
+              //  console.log("functionList: " + functionList);
+            });
+          }
+    });
+  } else {
+    namesExternals.forEach(function(nameExternal){
+      var itemVariable = new ItemVariable(nameExternal);
+      var locals = [];
+      var globals = [];
+      var externals = [];
+      var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
+      itemFunction.externals.push(itemVariable);
+      //functionList[indice].externals.push(itemVariable);
+      functionList.push(itemFunction);
+      console.log("externals lo agrega");
+      console.log("functionList: " + JSON.stringify(functionList));
+    });
+  }
 }
 
-function addExternalToItemFunction(nameItemFunction, nameExternal, functionList){
-    console.log("addExternalToItemFunction "+ JSON.stringify([nameItemFunction, nameExternal, functionList]));//FIXME
-  functionList.forEach(function(element){
-        var indice = arrayObjectIndexOf(functionList,nameItemFunction, "name");
-        if(indice == -1){ // No encontró el nombre
-           console.log("no encontró nameItemFunction externals !");
-           var itemVariable = new ItemVariable(nameExternal);
-           var locals = [];
-           var globals = [];
-           var externals = [];
-           var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
-           itemFunction.externals.push(itemVariable);
-           //functionList[indice].externals.push(itemVariable);
-           functionList.push(itemFunction);
-           console.log("externals lo agrega");
-         //  console.log("functionList: " + functionList);
-        } else { // Encontró el nombre
-          console.log("encontró nameItemFunction externals !");
-          var itemVariable = new ItemVariable(nameExternal);
-          functionList[indice].externals.push(itemVariable);
-          //  console.log("functionList: " + functionList);
-        }
-  });
-}
+// function addExternalToItemFunction(nameItemFunction, nameExternal, functionList){
+//     console.log("addExternalToItemFunction "+ JSON.stringify([nameItemFunction, nameExternal, functionList]));//FIXME
+//   functionList.forEach(function(element){
+//         var indice = arrayObjectIndexOf(functionList,nameItemFunction, "name");
+//         if(indice == -1){ // No encontró el nombre
+//            console.log("no encontró nameItemFunction externals !");
+//            var itemVariable = new ItemVariable(nameExternal);
+//            var locals = [];
+//            var globals = [];
+//            var externals = [];
+//            var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
+//            itemFunction.externals.push(itemVariable);
+//            //functionList[indice].externals.push(itemVariable);
+//            functionList.push(itemFunction);
+//            console.log("externals lo agrega");
+//          //  console.log("functionList: " + functionList);
+//         } else { // Encontró el nombre
+//           console.log("encontró nameItemFunction externals !");
+//           var itemVariable = new ItemVariable(nameExternal);
+//           functionList[indice].externals.push(itemVariable);
+//           //  console.log("functionList: " + functionList);
+//         }
+//   });
+// }
 
 function leave(node){
+  //console.log("salgo " + JSON.stringify(node));
+//  console.log("salgo: " + node.name);
     if (createsNewScope(node)){
         checkForLeaks(assignments, scopeChain, functionList);
         var currentScope = scopeChain.pop();
@@ -209,6 +256,10 @@ function leave(node){
       //  console.log(assignments);
         assignments = [];
         //addVarToItemFunction(nameItemFunction, varname, 'globals', functionList);
+        //addExternalToItemFunction(node.name, nameExternal, functionList);
+        addExternalToFunction(node.name, namesExternals, functionList);
+        //console.log("FunctionList salgo: " + JSON.stringify(functionList));
+        console.log("namesExternals: " + JSON.stringify(namesExternals));
     }
 }
 
@@ -248,7 +299,7 @@ function createsNewScope(node){
 }
 
 function printScope(scope, node){
-  console.log("scope: " + scope);
+  //console.log("scope: " + scope);
   var varsDisplay = scope.join(', ');
   if (node.type === 'Program'){
       console.log('Variables declared in the global scope:', varsDisplay);
