@@ -64,7 +64,19 @@ function enter(node){
       var currentScope = scopeChain[scopeChain.length - 1];
     //  console.log(node);
       // var name = node.callee.name;
-      var nameExternal = node.callee.object.name;
+      var nameExternal;
+      //console.log(node.callee);
+      if(node.callee.object != undefined){
+          if(node.callee.object.name != undefined){
+            if(node.callee.property != null && node.callee.property.name != undefined){
+              nameExternal = node.callee.object.name + "." + node.callee.property.name;
+            } else {
+            nameExternal = node.callee.object.name;
+            }
+          }
+      } else {
+        //nameExternal = node.callee.name;
+      }
       var nameGlobal;
       if(!isVarDefined(name, scopeChain))
         nameGlobal = 'global';
