@@ -119,7 +119,7 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
         var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
         itemFunction.locals.push(itemVariable);
         functionList.push(itemFunction);
-        console.log("addVarToItemFunction: locals lo agrega");
+        console.log("addVarToItemFunction: locals lo agrega " + itemVariable.name);
       } else if (type === 'globals') {
         console.log("functionList vacia, creo un globals nuevo");
         var itemVariable = new ItemVariable(nameVariable);
@@ -129,7 +129,7 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
         var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
         itemFunction.globals.push(itemVariable);
         functionList.push(itemFunction);
-        console.log("globals lo agrega.");
+        console.log("addVarToItemFunction: globals lo agrega " + itemVariable.name);
       } else if (type === 'externals'){
         console.log("functionList vacia, creo un externals nuevo");
         var itemVariable = new ItemVariable(nameVariable);
@@ -139,7 +139,7 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
         var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
         itemFunction.externals.push(itemVariable);
         functionList.push(itemFunction);
-        console.log("addVarToItemFunction: externals lo agrega");
+        console.log("addVarToItemFunction: externals lo agrega " + itemVariable.name);
       }
     } else {
       if(type === 'locals'){
@@ -161,6 +161,7 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
             console.log("encontró locals !");
             var itemVariable = new ItemVariable(nameVariable);
             functionList[indice].locals.push(itemVariable);
+            console.log("addVarToItemFunction: locals no vacío lo agrega " + itemVariable.name);
             //console.log("functionList: " + functionList);
           }
         });
@@ -176,7 +177,7 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
             var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
             itemFunction.globals.push(itemVariable);
             functionList.push(itemFunction);
-            console.log("addVarToItemFunction: globals lo agrega.");
+            console.log("addVarToItemFunction: globals no vacío lo agrega " + itemVariable.name);
           } else { // Encontró el nombre
             console.log("encontró globals !");
             var itemVariable = new ItemVariable(nameVariable);
@@ -197,12 +198,12 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
             var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
             itemFunction.externals.push(itemVariable);
             functionList.push(itemFunction);
-            console.log("externals lo agrega");
+            console.log("addVarToItemFunction: externals no vacío lo agrega " + itemVariable.name);
           } else { // Encontró el nombre
-            // console.log("encontró externals !");
-            // var itemVariable = new ItemVariable(nameVariable);
-            //  functionList[indice].externals.push(itemVariable);
-            //  console.log("functionList: " + functionList);
+            console.log("encontró externals !");
+            var itemVariable = new ItemVariable(nameVariable);
+            functionList[indice].externals.push(itemVariable);
+            console.log("functionList: " + functionList);
           }
         });
       } else {
