@@ -27,6 +27,7 @@
     "esprima": "^4.0.0",
     "estraverse": "^4.2.0",
     "fs": "0.0.1-security",
+    "graph-data-structure": "^1.0.0",
     "requirejs": "^2.3.5"
   }
 }

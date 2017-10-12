@@ -303,6 +303,17 @@ function leave(node) {
     if (functionList.length != 0) {
       console.log("FunctionList salgo: " + JSON.stringify(functionList));
       console.log("namesExternals: " + JSON.stringify(namesExternals));
+      var Graph = require("graph-data-structure");
+      var graph = Graph();
+      functionList.forEach(function(element) {
+        graph.addNode(element.name);
+        element.externals.forEach(function(nameExternal) {
+          graph.addNode(nameExternal.name);
+          graph.addEdge(nameExternal.name, element.name);
+        });
+      });
+      console.log("El grafo de referencias es: ");
+      console.log(graph.topologicalSort());
     }
   }
 }
