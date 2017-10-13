@@ -2,6 +2,8 @@
 var fs = require('fs');
 var esprima = require('esprima');
 var estraverse = require('estraverse');
+var Graph = require("graph-data-structure");
+var graph = Graph();
 
 var filename = process.argv[2];
 //var filename = 'test\\sourceSumar.js';
@@ -45,6 +47,27 @@ function enter(node) {
       nameGlobal = 'global';
     currentScope.push(name);
     variablesTotal.push(name);
+    //console.log(node);
+    // INICIO ESTO
+    if (node.init.type === 'CallExpression') {
+      var nameExternal;
+      //  console.log(node);
+      if (node.init.callee != undefined) {
+        //console.log("node.init.calle no es nulo");
+        if (node.init.calle != undefined) {
+          nameExternal = node.init.name;
+          // if (node.callee.property != null && node.callee.property.name != undefined) {
+          //   nameExternal = node.callee.object.name + "." + node.callee.property.name;
+          // } else {
+          //   nameExternal = node.callee.object.name;
+          // }
+        }
+      } else {
+        //nameExternal = node.callee.name;
+      }
+      namesExternals.push(nameExternal);
+      // FIN ESTO
+    }
   }
   if (node.type === 'AssignmentExpression') {
     assignments.push(node);
@@ -264,32 +287,7 @@ function addExternalToFunction(nameItemFunction, namesExternals, functionList) {
   }
 }
 
-// function addExternalToItemFunction(nameItemFunction, nameExternal, functionList){
-//     console.log("addExternalToItemFunction "+ JSON.stringify([nameItemFunction, nameExternal, functionList]));//FIXME
-//   functionList.forEach(function(element){
-//         var indice = arrayObjectIndexOf(functionList,nameItemFunction, "name");
-//         if(indice == -1){ // No encontró el nombre
-//            console.log("no encontró nameItemFunction externals !");
-//            var itemVariable = new ItemVariable(nameExternal);
-//            var locals = [];
-//            var globals = [];
-//            var externals = [];
-//            var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
-//            itemFunction.externals.push(itemVariable);
-//            //functionList[indice].externals.push(itemVariable);
-//            functionList.push(itemFunction);
-//            console.log("externals lo agrega");
-//          //  console.log("functionList: " + functionList);
-//         } else { // Encontró el nombre
-//           console.log("encontró nameItemFunction externals !");
-//           var itemVariable = new ItemVariable(nameExternal);
-//           functionList[indice].externals.push(itemVariable);
-//           //  console.log("functionList: " + functionList);
-//         }
-//   });
-// }
-
-function leave(node) {
+function leave(node, graph) {
   if (createsNewScope(node)) {
     checkForLeaks(assignments, scopeChain, functionList);
     var currentScope = scopeChain.pop();
@@ -301,10 +299,10 @@ function leave(node) {
       addExternalToFunction(nameFunction, namesExternals, functionList);
     }
     if (functionList.length != 0) {
-      console.log("FunctionList salgo: " + JSON.stringify(functionList));
-      console.log("namesExternals: " + JSON.stringify(namesExternals));
-      var Graph = require("graph-data-structure");
-      var graph = Graph();
+      // console.log("FunctionList salgo: " + JSON.stringify(functionList));
+      // console.log("namesExternals: " + JSON.stringify(namesExternals));
+      // var Graph = require("graph-data-structure");
+      // var graph = Graph();
       functionList.forEach(function(element) {
         graph.addNode(element.name);
         element.externals.forEach(function(nameExternal) {
@@ -312,12 +310,21 @@ function leave(node) {
           graph.addEdge(element.name, nameExternal.name);
         });
       });
-      console.log("El grafo de referencias es: ");
-      console.log(graph.topologicalSort());
-      console.log("El grafo serializado es: ");
-      console.log(graph.serialize());
+      // console.log("El grafo de referencias es: ");
+      // console.log(graph.topologicalSort());
+      // console.log("El grafo serializado es: ");
+      // console.log(graph.serialize());
     }
   }
+}
+
+function printLeave(graph) {
+  console.log("FunctionList salgo: " + JSON.stringify(functionList));
+  console.log("namesExternals: " + JSON.stringify(namesExternals));
+  console.log("El grafo de referencias es: ");
+  console.log(graph.topologicalSort());
+  console.log("El grafo serializado es: ");
+  console.log(graph.serialize());
 }
 
 function isVarDefined(varname, scopeChain) {
@@ -384,6 +391,7 @@ function processVariablesTotal(variablesTotal) {
   console.log(count);
 }
 processVariablesTotal(variablesTotal);
+printLeave(graph);
 
 
 function arrayObjectIndexOf(myArray, searchTerm, property) {

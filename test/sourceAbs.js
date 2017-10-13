@@ -1,9 +1,11 @@
 var h = 0;
-function Absoluto(x){
+
+function Absoluto(x) {
   let abso = Math.abs(x);
   return abso;
 }
 
-function Random(x){
-	return Absoluto(x);
+function Random(x) {
+  var y = Absoluto(x);
+  return y;
 }
