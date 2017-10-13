@@ -309,11 +309,13 @@ function leave(node) {
         graph.addNode(element.name);
         element.externals.forEach(function(nameExternal) {
           graph.addNode(nameExternal.name);
-          graph.addEdge(nameExternal.name, element.name);
+          graph.addEdge(element.name, nameExternal.name);
         });
       });
       console.log("El grafo de referencias es: ");
       console.log(graph.topologicalSort());
+      console.log("El grafo serializado es: ");
+      console.log(graph.serialize());
     }
   }
 }
