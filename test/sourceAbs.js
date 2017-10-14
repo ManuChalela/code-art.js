@@ -1,7 +1,7 @@
 var x = 5;
 
 function Absoluto(x) {
-  let abso = Math.abs(x);
+  var abso = Math.abs(x);
   return abso;
 }
 

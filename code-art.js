@@ -62,11 +62,12 @@ function enter(node) {
           // } else {
           //   nameExternal = node.callee.object.name;
           // }
+          namesExternals.push(nameExternal);
         }
       } else {
         //nameExternal = node.callee.name;
       }
-      namesExternals.push(nameExternal);
+
       // FIN ESTO
     }
   }
