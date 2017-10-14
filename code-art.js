@@ -2,8 +2,6 @@
 var fs = require('fs');
 var esprima = require('esprima');
 var estraverse = require('estraverse');
-var Graph = require("graph-data-structure");
-var graph = Graph();
 
 var filename = process.argv[2];
 //var filename = 'test\\sourceSumar.js';
@@ -32,6 +30,9 @@ estraverse.traverse(ast, {
 function Locals(name) {
   this.name = name;
 }
+var Graph = require("graph-data-structure");
+//var grapho = Graph();
+var grapho;
 
 function enter(node) {
   if (createsNewScope(node)) {
@@ -287,7 +288,7 @@ function addExternalToFunction(nameItemFunction, namesExternals, functionList) {
   }
 }
 
-function leave(node, graph) {
+function leave(node) {
   if (createsNewScope(node)) {
     checkForLeaks(assignments, scopeChain, functionList);
     var currentScope = scopeChain.pop();
@@ -303,6 +304,8 @@ function leave(node, graph) {
       // console.log("namesExternals: " + JSON.stringify(namesExternals));
       // var Graph = require("graph-data-structure");
       // var graph = Graph();
+      var Graph = require("graph-data-structure");
+      var graph = Graph();
       functionList.forEach(function(element) {
         graph.addNode(element.name);
         element.externals.forEach(function(nameExternal) {
@@ -310,6 +313,7 @@ function leave(node, graph) {
           graph.addEdge(element.name, nameExternal.name);
         });
       });
+      grapho = graph;
       // console.log("El grafo de referencias es: ");
       // console.log(graph.topologicalSort());
       // console.log("El grafo serializado es: ");
@@ -391,7 +395,7 @@ function processVariablesTotal(variablesTotal) {
   console.log(count);
 }
 processVariablesTotal(variablesTotal);
-printLeave(graph);
+printLeave(grapho);
 
 
 function arrayObjectIndexOf(myArray, searchTerm, property) {
