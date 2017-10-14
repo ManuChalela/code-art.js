@@ -10,3 +10,7 @@ function Random(x) {
   var y = Math.Random(0, x);
   return y;
 }
+
+function Max() {
+  return Number.MAX_VALUE;
+}

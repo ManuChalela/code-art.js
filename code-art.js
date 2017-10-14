@@ -238,7 +238,6 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
       }
     }
   }
-  // console.log("functionList: " + JSON.stringify(functionList));
 }
 
 function addExternalToFunction(nameItemFunction, namesExternals, functionList) {
@@ -247,41 +246,26 @@ function addExternalToFunction(nameItemFunction, namesExternals, functionList) {
   var externals = [];
   if (nameItemFunction != undefined && namesExternals.length != 0) {
     if (functionList.length === 0) {
-      //var locals = [];
-      //var globals = [];
-      //var externals = [];
       var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
       namesExternals.forEach(function(nameExternal) {
         var itemExternal = new ItemExternal(nameExternal);
         itemFunction.externals.push(itemExternal);
-        //functionList[indice].externals.push(itemVariable);
       });
       functionList.push(itemFunction);
-      //  console.log("addExternalToFunction: externals lo agrega ");
-      //  console.log("functionList: " + JSON.stringify(functionList));
     } else {
       functionList.forEach(function(element) {
         var indice = arrayObjectIndexOf(functionList, nameItemFunction, "name");
         if (indice == -1) { // No encontró el nombre de la function
-          //    console.log("no encontró nameItemFunction externals ! ");
           namesExternals.forEach(function(nameExternal) {
             var itemExternal = new ItemExternal(nameExternal);
-            //           var locals = [];
-            //          var globals = [];
-            //          var externals = [];
             var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
             itemFunction.externals.push(itemExternal);
             functionList.push(itemFunction);
-            //    console.log("addExternalToFunction: externals lo agrega");
-            //  console.log(JSON.stringify(functionList));
           });
-          //  console.log("functionList: " + functionList);
         } else { // Encontró el nombre de la function
-          //console.log("addExternalToFunction: encontró nameItemFunction externals " + nameItemFunction);
           namesExternals.forEach(function(nameExternal) {
             var itemExternal = new ItemExternal(nameExternal);
             functionList[indice].externals.push(itemExternal);
-            //  console.log("functionList: " + functionList);
           });
         }
       });
@@ -299,6 +283,7 @@ function leave(node) {
     if (node.type === 'FunctionDeclaration') {
       nameFunction = node.id.name;
       addExternalToFunction(nameFunction, namesExternals, functionList);
+      //namesExternals.length = 0;
     }
     if (functionList.length != 0) {
       // console.log("FunctionList salgo: " + JSON.stringify(functionList));
