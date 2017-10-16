@@ -204,7 +204,12 @@ function addExternalToFunction(nameItemFunction, namesExternals, functionList) {
       var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
       namesExternals.forEach(function(nameExternal) {
         var itemExternal = new ItemExternal(nameExternal);
-        itemFunction.externals.push(itemExternal);
+        var indiceExternal = arrayObjectIndexOf(namesExternals, nameExternal, "name");
+        if (indiceExternal == -1) {
+          itemFunction.externals.push(itemExternal);
+        } else {
+          console.log("ya se encontró: " + nameExternal);
+        }
       });
       functionList.push(itemFunction);
     } else {
@@ -220,7 +225,14 @@ function addExternalToFunction(nameItemFunction, namesExternals, functionList) {
         } else { // Encontró el nombre de la function
           namesExternals.forEach(function(nameExternal) {
             var itemExternal = new ItemExternal(nameExternal);
-            functionList[indice].externals.push(itemExternal);
+            var indiceExternal = arrayObjectIndexOf(element.externals, nameExternal, "name");
+            if (indiceExternal == -1) {
+              //itemFunction.externals.push(itemExternal);
+              functionList[indice].externals.push(itemExternal);
+            } else {
+              console.log("ya se encontró: " + nameExternal);
+            }
+            //functionList[indice].externals.push(itemExternal);
           });
         }
       });
@@ -238,19 +250,35 @@ function leave(node) {
     if (node.type === 'FunctionDeclaration') {
       nameFunction = node.id.name;
       addExternalToFunction(nameFunction, namesExternals, functionList);
-      //namesExternals.length = 0;
+      namesExternals.length = 0; // Limpio el namesExternals
     }
     if (functionList.length != 0) {
       var Graph = require("graph-data-structure");
       var graph = Graph();
       functionList.forEach(function(element) {
         graph.addNode(element.name);
+        //console.log("nodo: " + element.name);
+        //console.log("external de nodo: " + JSON.stringify(element.externals));
         element.externals.forEach(function(nameExternal) {
-          graph.addNode(nameExternal.name);
+          if (getNode(graph, nameExternal) == null) {
+            graph.addNode(nameExternal.name);
+          }
+          // graph.addNode(nameExternal.name);
+          //console.log(JSON.stringify(element.externals));
           graph.addEdge(element.name, nameExternal.name);
         });
       });
+      var functionListJS = JSON.stringify(functionList);
+      fs.writeFile('functionList.json', functionListJS, 'utf8', function(err) {
+        if (err) throw err;
+        //    console.log('functionListJS complete');
+      });
       grapho = graph;
+      var graphoJS = JSON.stringify(grapho);
+      fs.writeFile('grapho.json', graphoJS, 'utf8', function(err) {
+        if (err) throw err;
+        //  console.log('graphoJS complete');
+      });
     }
   }
 }
@@ -331,4 +359,15 @@ function arrayObjectIndexOf(myArray, searchTerm, property) {
     if (myArray[i][property] === searchTerm) return i;
   }
   return -1;
+}
+
+
+function getNode(graph, nodeId) {
+  var allNodes = graph.nodes();
+  var indiceNode = arrayObjectIndexOf(allNodes, nodeId, "id");
+  if (indiceNode == -1) {
+    return null;
+  } else {
+    return allNodes[indiceNode];
+  }
 }
