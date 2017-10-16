@@ -4,7 +4,7 @@ var esprima = require('esprima');
 var estraverse = require('estraverse');
 
 var filename = process.argv[2];
-//var filename = 'test\\sourceSumar.js';
+//var filename = 'test\\sourceAbs.js';
 console.log('Processing', filename);
 try {
   var data = fs.readFileSync(filename, 'utf8');
@@ -53,7 +53,7 @@ function enter(node) {
     if (node.init.type === 'CallExpression') {
       var nameExternal;
       if (node.init.callee != undefined) {
-        if (node.init.calle != undefined) {
+        if (nameExternal != undefined && nameGlobal != 'global') {
           nameExternal = node.init.name;
           namesExternals.push(nameExternal);
         }
@@ -67,23 +67,22 @@ function enter(node) {
   if (node.type === 'CallExpression') {
     var currentScope = scopeChain[scopeChain.length - 1];
     var nameExternal;
-    if (node.callee.object != undefined) {
-      if (node.callee.object.name != undefined) {
-        if (node.callee.property != null && node.callee.property.name != undefined) {
-          nameExternal = node.callee.object.name + "." + node.callee.property.name;
-        } else {
-          nameExternal = node.callee.object.name;
+    if (node.callee.type === "MemberExpression") {
+      if (node.callee.object != undefined) {
+        if (node.callee.object.name != undefined) {
+          if (node.callee.property != null && node.callee.property.name != undefined) {
+            nameExternal = node.callee.object.name + "." + node.callee.property.name;
+          } else {
+            nameExternal = node.callee.object.name;
+          }
         }
       }
+    } else if (node.callee.type === "Identifier") {
+      nameExternal = node.callee.name;
     }
-    var nameGlobal;
-    if (!isVarDefined(name, scopeChain))
-      nameGlobal = 'global';
-    currentScope.push(name);
-    variablesTotal.push(name);
-    if (nameExternal != undefined)
-      if (nameGlobal != 'global') // pruebo esto.
-        namesExternals.push(nameExternal);
+    // Agrego como external cuando no estoy en scope global
+    if (nameExternal != undefined && currentScope !== scopeChain[0])
+      namesExternals.push(nameExternal);
   }
 }
 
@@ -214,7 +213,6 @@ function addExternalToFunction(nameItemFunction, namesExternals, functionList) {
       });
       functionList.push(itemFunction);
     } else {
-      // functionList.forEach(function(element) {
       var indice = arrayObjectIndexOf(functionList, nameItemFunction, "name");
       if (indice == -1) { // No encontró el nombre de la function
         namesExternals.forEach(function(nameExternal) {
@@ -236,7 +234,6 @@ function addExternalToFunction(nameItemFunction, namesExternals, functionList) {
           //functionList[indice].externals.push(itemExternal);
         });
       }
-      // });
     }
   }
 }
@@ -251,7 +248,7 @@ function leave(node) {
     if (node.type === 'FunctionDeclaration') {
       nameFunction = node.id.name;
       addExternalToFunction(nameFunction, namesExternals, functionList);
-      namesExternals.length = 0; // Limpio el namesExternals
+      namesExternals = []
     }
     if (functionList.length != 0) {
       var Graph = require("graph-data-structure");
@@ -261,10 +258,10 @@ function leave(node) {
         //console.log("nodo: " + element.name);
         //console.log("external de nodo: " + JSON.stringify(element.externals));
         element.externals.forEach(function(nameExternal) {
-          if (getNode(graph, nameExternal) == null) {
+          const actualNode = getNode(graph, nameExternal.name);
+          if (!actualNode) {
             graph.addNode(nameExternal.name);
           }
-          // graph.addNode(nameExternal.name);
           //console.log(JSON.stringify(element.externals));
           graph.addEdge(element.name, nameExternal.name);
         });
@@ -362,13 +359,14 @@ function arrayObjectIndexOf(myArray, searchTerm, property) {
   return -1;
 }
 
-
 function getNode(graph, nodeId) {
-  var allNodes = graph.nodes();
-  var indiceNode = arrayObjectIndexOf(allNodes, nodeId, "id");
-  if (indiceNode == -1) {
-    return null;
+  const allNodes = graph.nodes();
+  const index = arrayObjectIndexOf(allNodes, nodeId, "id");
+  if (index !== -1) {
+    return allNodes[index];
   } else {
-    return allNodes[indiceNode];
+    return null;
   }
+
+
 }

@@ -14,3 +14,7 @@ function Random(x) {
 // function Max() {
 //   return Number.MAX_VALUE;
 // }
+
+function Random2(x) {
+  return Absoluto(x);
+}
