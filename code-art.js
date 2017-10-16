@@ -82,7 +82,8 @@ function enter(node) {
     currentScope.push(name);
     variablesTotal.push(name);
     if (nameExternal != undefined)
-      namesExternals.push(nameExternal);
+      if (nameGlobal != 'global') // pruebo esto.
+        namesExternals.push(nameExternal);
   }
 }
 
@@ -213,29 +214,29 @@ function addExternalToFunction(nameItemFunction, namesExternals, functionList) {
       });
       functionList.push(itemFunction);
     } else {
-      functionList.forEach(function(element) {
-        var indice = arrayObjectIndexOf(functionList, nameItemFunction, "name");
-        if (indice == -1) { // No encontró el nombre de la function
-          namesExternals.forEach(function(nameExternal) {
-            var itemExternal = new ItemExternal(nameExternal);
-            var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
-            itemFunction.externals.push(itemExternal);
-            functionList.push(itemFunction);
-          });
-        } else { // Encontró el nombre de la function
-          namesExternals.forEach(function(nameExternal) {
-            var itemExternal = new ItemExternal(nameExternal);
-            var indiceExternal = arrayObjectIndexOf(element.externals, nameExternal, "name");
-            if (indiceExternal == -1) {
-              //itemFunction.externals.push(itemExternal);
-              functionList[indice].externals.push(itemExternal);
-            } else {
-              console.log("ya se encontró: " + nameExternal);
-            }
-            //functionList[indice].externals.push(itemExternal);
-          });
-        }
-      });
+      // functionList.forEach(function(element) {
+      var indice = arrayObjectIndexOf(functionList, nameItemFunction, "name");
+      if (indice == -1) { // No encontró el nombre de la function
+        namesExternals.forEach(function(nameExternal) {
+          var itemExternal = new ItemExternal(nameExternal);
+          var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
+          itemFunction.externals.push(itemExternal);
+          functionList.push(itemFunction);
+        });
+      } else { // Encontró el nombre de la function
+        namesExternals.forEach(function(nameExternal) {
+          var itemExternal = new ItemExternal(nameExternal);
+          var indiceExternal = arrayObjectIndexOf(functionList[indice].externals, nameExternal, "name");
+          if (indiceExternal == -1) {
+            //itemFunction.externals.push(itemExternal);
+            functionList[indice].externals.push(itemExternal);
+          } else {
+            console.log("ya se encontró: " + nameExternal);
+          }
+          //functionList[indice].externals.push(itemExternal);
+        });
+      }
+      // });
     }
   }
 }
