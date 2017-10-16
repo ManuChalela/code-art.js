@@ -8,7 +8,6 @@ var filename = process.argv[2];
 console.log('Processing', filename);
 try {
   var data = fs.readFileSync(filename, 'utf8');
-  //  console.log('sync readFile');
 } catch (e) {
   console.log(e);
 }
@@ -30,7 +29,7 @@ estraverse.traverse(ast, {
 function Locals(name) {
   this.name = name;
 }
-var Graph = require("graph-data-structure");
+//var Graph = require("graph-data-structure");
 //var grapho = Graph();
 var grapho;
 
@@ -41,15 +40,12 @@ function enter(node) {
   // console.log(node);
   if (node.type === 'VariableDeclarator') {
     var currentScope = scopeChain[scopeChain.length - 1];
-    //console.log("currentScope: " + currentScope);
     var name = node.id.name;
     var nameGlobal;
     if (!isVarDefined(name, scopeChain))
       nameGlobal = 'global';
     currentScope.push(name);
     variablesTotal.push(name);
-    //console.log(node);
-    // INICIO ESTO
     if (node.init.type === 'CallExpression') {
       var nameExternal;
       if (node.init.callee != undefined) {
@@ -59,7 +55,6 @@ function enter(node) {
         }
       }
     }
-    // FIN ESTO
   }
   if (node.type === 'AssignmentExpression') {
     assignments.push(node);
@@ -231,7 +226,6 @@ function addExternalToFunction(nameItemFunction, namesExternals, functionList) {
           } else {
             console.log("ya se encontró: " + nameExternal);
           }
-          //functionList[indice].externals.push(itemExternal);
         });
       }
     }
@@ -255,27 +249,22 @@ function leave(node) {
       var graph = Graph();
       functionList.forEach(function(element) {
         graph.addNode(element.name);
-        //console.log("nodo: " + element.name);
-        //console.log("external de nodo: " + JSON.stringify(element.externals));
         element.externals.forEach(function(nameExternal) {
           const actualNode = getNode(graph, nameExternal.name);
           if (!actualNode) {
             graph.addNode(nameExternal.name);
           }
-          //console.log(JSON.stringify(element.externals));
           graph.addEdge(element.name, nameExternal.name);
         });
       });
       var functionListJS = JSON.stringify(functionList);
       fs.writeFile('functionList.json', functionListJS, 'utf8', function(err) {
         if (err) throw err;
-        //    console.log('functionListJS complete');
       });
       grapho = graph;
       var graphoJS = JSON.stringify(grapho);
       fs.writeFile('grapho.json', graphoJS, 'utf8', function(err) {
         if (err) throw err;
-        //  console.log('graphoJS complete');
       });
     }
   }

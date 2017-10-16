@@ -79,7 +79,8 @@
         {id: 2, label: "2", group: 0},
         {id: 3, label: "3", group: 0}
     ];
-    var edges = [{from: 1, to: 0},{from: 2, to: 0},{from: 2, to: 3},{from: 1, to: 3}]
+    var edges = [{from: 1, to: 0, arrows:'to'},{from: 2, to: 0, arrows:'to'},
+    {from: 2, to: 3, arrows:'to'},{from: 1, to: 3, arrows:'to'}]
     // create a network
     var container = document.getElementById('mynetwork');
     var data = {
