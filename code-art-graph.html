@@ -18,54 +18,44 @@
     <script src="http://visjs.org/dist/vis.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" type="text/css"/>
+    <script src="https://cdn.jsdelivr.net/gh/kevindb/jquery-load-json@1.3.3/dist/jquery.loadJSON.min.js" integrity="sha384-fG4z44FEBJnIevyzvSDobSmVTsO/oVsxNvKcUl7bO1ihWYDPg2QI83Xi+7wSBzap" crossorigin="anonymous"></script>
 </head>
 <body>
 <div id="mynetwork"></div>
-<script type="text/javascript">
+<script>
+var gephiJSONnode = $.getJSON("nodes.json"); // loadJSON('nodes.js'); // code in importing_from_gephi.
+var gephiJSONedges = $.getJSON("links.json"); //loadJSON('links.js');
+var data = {
+    nodes: gephiJSONnode,
+    edges: gephiJSONedges
+};
+// you can customize the result like with these options. These are explained below.
+// These are the default options.
+var parserOptions = {
+  edges: {
+    inheritColors: false
+  },
+  nodes: {
+    fixed: true,
+    parseColor: false
+  }
+}
 
-// function init() {
-//   loadJSON(function(response) {
-//     // Parse JSON string into object
-//     var actual_JSON = JSON.parse(response);
-//     console.log(JSON.stringify(actual_JSON));
-//   });
-// }
-//
-// function loadJSON(callback) {
-//   var xobj = new XMLHttpRequest();
-//   xobj.overrideMimeType("application/json");
-//   xobj.open('GET', 'functionList.json', true); // Replace 'my_data' with the path to your file
-//   xobj.onreadystatechange = function () {
-//     if (xobj.readyState == 4 && xobj.status == "200") {
-//        // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
-//        callback(xobj.responseText);
-//     }
-//   };
-//   xobj.send(null);
-// }
-//
-// var jqxhr = $.getJSON( "functionList.json", function() {
-//   console.log( "success" );
-// })
-//   .done(function() {
-//     console.log( "second success" );
-//   })
-//   .fail(function() {
-//     console.log( "error" );
-//   })
-//   .always(function() {
-//     console.log( "complete" );
-//   });
-//
-// // Perform other work here ...
-//
-// // Set another completion function for the request above
-// jqxhr.complete(function() {
-//   console.log( "second complete" );
-// });
+// parse the gephi file to receive an object
+// containing nodes and edges in vis format.
+//var parsed = vis.network.convertGephi(gephiJSON, parserOptions);
+
+// provide data in the normal fashion
+// var data = {
+//   nodes: parsed.nodes,
+//   edged: parsed.edges
+// };
+var container = document.getElementById('mynetwork');
+// create a network
+var network = new vis.Network(container, data);
+
 </script>
-<script type="text/javascript">
-//var mydata = JSON.parse(myFunctionList);
+<!-- <script type="text/javascript">
     var len = undefined;
     function itemNode(id, label, group){
       this.id = id;
@@ -103,46 +93,7 @@
         }
     };
     network = new vis.Network(container, data, options);
-</script>
-<script type="text/javascript">
-jQuery(document).ready(function($) {
-  $.ajax({
-    type: 'GET',
-    url: 'functionList.json',
-    crossOrigin: true,
-    success:function(data){
-      console.log(data.name);
-    },
-    error: function (data, error) {
-      console.log("error");
-      console.log(data);
-      console.log(error);
-    }
-  });
-  // $.ajax({
-  //   type: 'GET',
-  //   headers: {
-  //     // 'Access-Control-Allow-Origin': '*'
-  //     'Access-Control-Allow-Origin': '*',
-  //     'Access-Control-Allow-Methods': 'GET',
-  //     'Access-Control-Allow-Headers': 'Content-Type'
-  //   },
-  //   crossOrigin: true,
-  //   url: 'http://10.8.87.176:4567/hello',
-  //   success:function(data){
-  //     console.log(data);
-  //     var newSrc = "data:image/png;base64, " + data.userName;
-  //     $('#imageProfile').attr('src',newSrc);
-  //   },
-  //   error: function (data, error) {
-  //     console.log("error");
-  //     console.log(data);
-  //     console.log(error);
-  //   }
-  // });
-});
-</script>
-
+</script> -->
 </body>
 </html>
 </html>

@@ -33,6 +33,12 @@ function Locals(name) {
 //var grapho = Graph();
 var grapho;
 
+function itemNode(id, label, group) {
+  this.id = id;
+  this.label = label;
+  this.group = group;
+}
+
 function enter(node) {
   if (createsNewScope(node)) {
     scopeChain.push([]);
@@ -262,21 +268,73 @@ function leave(node) {
         if (err) throw err;
       });
       grapho = graph;
-      var graphoJS = JSON.stringify(grapho);
-      fs.writeFile('grapho.json', graphoJS, 'utf8', function(err) {
-        if (err) throw err;
-      });
+      // var graphoJS = JSON.stringify(grapho);
+      // fs.writeFile('grapho.json', graphoJS, 'utf8', function(err) {
+      //   if (err) throw err;
+      // });
     }
   }
 }
 
 function printLeave(graph) {
-  console.log("FunctionList salgo: " + JSON.stringify(functionList));
-  console.log("namesExternals: " + JSON.stringify(namesExternals));
+  console.log("FunctionList: " + JSON.stringify(functionList));
+  //console.log("namesExternals: " + JSON.stringify(namesExternals));
   console.log("El grafo de referencias es: ");
   console.log(graph.topologicalSort());
   console.log("El grafo serializado es: ");
   console.log(graph.serialize());
+  // console.log("Solo serializados nodo: ");
+  // console.log(graph.serialize().nodes);
+  // console.log("Solo serializados links: ");
+  // console.log(graph.serialize().links);
+  var graphoJS = JSON.stringify(graph.serialize());
+  fs.writeFile('grapho.json', graphoJS, 'utf8', function(err) {
+    if (err) throw err;
+  });
+  //var nodesJS = JSON.stringify(graph.serialize().nodes);
+  var nodesJS = [];
+  for (var i = 0; i < graph.serialize().nodes.length; i++) {
+    var itemN = new itemNode(i, graph.serialize().nodes[i].id, 0);
+    nodesJS.push(JSON.stringify(itemN));
+  }
+  fs.writeFile('nodes.json', nodesJS, 'utf8', function(err) {
+    if (err) throw err;
+  });
+  var linksJS = [];
+  for (var i = 0; i < graph.serialize().links.length; i++) {
+    var fromIndex = arrayObjectIndexOf(graph.serialize().nodes, graph.serialize().links[i].source, "id");
+    var toIndex = arrayObjectIndexOf(graph.serialize().nodes, graph.serialize().links[i].target, "id");
+    var itemLink = {
+      from: fromIndex,
+      to: toIndex,
+      arrow: 'to'
+    };
+    linksJS.push(JSON.stringify(itemLink));
+  }
+  fs.writeFile('links.json', linksJS, 'utf8', function(err) {
+    if (err) throw err;
+  });
+
+
+  var nodesBackJS = JSON.stringify(graph.serialize().nodes);
+  fs.writeFile('nodesBack.json', nodesBackJS, 'utf8', function(err) {
+    if (err) throw err;
+  });
+  var linksBackJS = JSON.stringify(graph.serialize().links);
+  fs.writeFile('linksBack.json', linksBackJS, 'utf8', function(err) {
+    if (err) throw err;
+  });
+  var visGraphJS = graph.serialize();
+  var visGraphNodes = [];
+  visGraphJS.nodes.forEach(function(nodeElement) {
+    var indice = arrayObjectIndexOf(visGraphJS.nodes, nodeElement.id, "id");
+    var itemN = new itemNode(indice, nodeElement.id, 0);
+    //visGraphNodes.push(itemN);
+    visGraphNodes.push(nodeElement.id);
+  });
+  fs.writeFile('visGraphNodes.json', visGraphNodes, 'utf8', function(err) {
+    if (err) throw err;
+  });
 }
 
 function isVarDefined(varname, scopeChain) {
@@ -356,6 +414,4 @@ function getNode(graph, nodeId) {
   } else {
     return null;
   }
-
-
 }
