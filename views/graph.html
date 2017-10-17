@@ -23,17 +23,15 @@
 <button id="get-nodes">Get graph</button>
 <div id="mynetwork"></div>
 <script type="text/javascript">
-var gephiJSONnode, gephiJSONedges;
 $("#get-nodes").on("click", function(){
     $.get('/getNodes', function(resultado){
-		    var objetoR = JSON.parse(resultado);
-	      gephiJSONnode = objetoR.nodes;
-	      gephiJSONedges = objetoR.edges;
-	      var len = undefined;
-        console.log(gephiJSONnode);
-	      var nodes = gephiJSONnode;
-	      console.log(gephiJSONedges);
-	      var edges = gephiJSONedges;
+       //var nodes = [];
+       //var edges = [];
+       var nodes = resultado.nodes;
+       var edges = resultado.edges;
+       console.log("nodos: " + nodes);
+       console.log("edges: " + edges);
+        var len = undefined;
         // create a network
         var container = document.getElementById('mynetwork');
         var data = {
@@ -52,7 +50,8 @@ $("#get-nodes").on("click", function(){
           },
           edges: {
             width: 2,
-            shadow:true
+            shadow: true,
+            arrows: 'to'
           }
         };
         network = new vis.Network(container, data, options);
