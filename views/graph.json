@@ -1,0 +1,18 @@
+{
+  "nodes":
+  [
+    {"id":0,"label":"Absoluto","group":0},
+    {"id":1,"label":"Math.abs","group":0},
+    {"id":2,"label":"Random","group":0},
+    {"id":3,"label":"Math.Random","group":0},
+    {"id":4,"label":"Random2","group":0},
+    {"id":5,"label":"Mult","group":0}
+  ],
+  "edges":
+  [
+    {"from":0,"to":1,"arrow":"to"},
+    {"from":2,"to":3,"arrow":"to"},
+    {"from":4,"to":0,"arrow":"to"},
+    {"from":5,"to":0,"arrow":"to"}
+  ]
+}
