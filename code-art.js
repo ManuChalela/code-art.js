@@ -314,60 +314,24 @@ function printLeave(graph) {
     if (err) throw err;
   });
 
-
-  var nodesBackJS = JSON.stringify(graph.serialize().nodes);
-  fs.writeFile('nodesBack.json', nodesBackJS, 'utf8', function(err) {
-    if (err) throw err;
-  });
-  var linksBackJS = JSON.stringify(graph.serialize().links);
-  linksBackJS = "'[" + linksBackJS + "]";
-  fs.writeFile('linksBack.json', linksBackJS, 'utf8', function(err) {
-    if (err) throw err;
-  });
-  var visGraphJS = graph.serialize();
-  var visGraphNodes = [];
-  visGraphJS.nodes.forEach(function(nodeElement) {
-    var indice = arrayObjectIndexOf(visGraphJS.nodes, nodeElement.id, "id");
-    var itemN = new itemNode(indice, nodeElement.id, 0);
-    //visGraphNodes.push(itemN);
-    visGraphNodes.push(nodeElement.id);
-  });
-  var nodeG = JSON.stringify(nodesJS);
-  jsonfile.writeFile('visGraphNodes.json', nodeG, 'utf8');
-
-  var file = 'visGraphNodes.json'
-  var obj = {
-    name: 'JP'
-  }
-
-  jsonfile.writeFileSync(file, obj, {
-    flag: 'a'
-  })
-  try {
-    var objLinks;
-    // jsonfile.readFile('links.json', 'utf8', function(err, data) {
-    //   if (err) throw err;
-    //   //objLinks = JSON.parse(data);
-    //   //console.log(data);
-    //   var resLink = '[' + JSON.stringify(data) + ']';
-    //   jsonfile.writeFile('views/links.json', resLink, 'utf8', function(err) {
-    //     if (err) throw err;
-    //   });
-    // });
-
-    var objNodes;
-    // jsonfile.readFile('nodes.json', 'utf8', function(err, data) {
-    //   if (err) throw err;
-    //   //objNodes = JSON.parse(data);
-    //   //console.log(objNodes);
-    //   var resNodes = '[' + JSON.stringify(data) + ']';
-    //   jsonfile.writeFile('views/nodes.json', resNodes, 'utf8', function(error) {
-    //     if (error) throw error;
-    //   });
-    // });
-  } catch (e) {
-    console.log(e);
-  }
+  /*
+    var nodesBackJS = JSON.stringify(graph.serialize().nodes);
+    fs.writeFile('nodesBack.json', nodesBackJS, 'utf8', function(err) {
+      if (err) throw err;
+    });
+    var linksBackJS = JSON.stringify(graph.serialize().links);
+    linksBackJS = "'[" + linksBackJS + "]";
+    fs.writeFile('linksBack.json', linksBackJS, 'utf8', function(err) {
+      if (err) throw err;
+    });
+    var visGraphJS = graph.serialize();
+    var visGraphNodes = [];
+    visGraphJS.nodes.forEach(function(nodeElement) {
+      var indice = arrayObjectIndexOf(visGraphJS.nodes, nodeElement.id, "id");
+      var itemN = new itemNode(indice, nodeElement.id, 0);
+      //visGraphNodes.push(itemN);
+      visGraphNodes.push(nodeElement.id);
+    });*/
 }
 
 function isVarDefined(varname, scopeChain) {
