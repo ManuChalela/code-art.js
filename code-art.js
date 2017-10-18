@@ -2,6 +2,7 @@
 var fs = require('fs');
 var esprima = require('esprima');
 var estraverse = require('estraverse');
+var jsonfile = require('jsonfile');
 
 var filename = process.argv[2];
 //var filename = 'test\\sourceAbs.js';
@@ -293,6 +294,7 @@ function printLeave(graph) {
     var itemN = new itemNode(i, graph.serialize().nodes[i].id, 0);
     nodesJS.push(JSON.stringify(itemN));
   }
+  nodesJS = "[" + nodesJS + "]";
   fs.writeFile('nodes.json', nodesJS, 'utf8', function(err) {
     if (err) throw err;
   });
@@ -303,10 +305,11 @@ function printLeave(graph) {
     var itemLink = {
       from: fromIndex,
       to: toIndex,
-      arrow: 'to'
+      arrows: 'to'
     };
     linksJS.push(JSON.stringify(itemLink));
   }
+  linksJS = "[" + linksJS + "]";
   fs.writeFile('links.json', linksJS, 'utf8', function(err) {
     if (err) throw err;
   });
@@ -317,6 +320,7 @@ function printLeave(graph) {
     if (err) throw err;
   });
   var linksBackJS = JSON.stringify(graph.serialize().links);
+  linksBackJS = "'[" + linksBackJS + "]";
   fs.writeFile('linksBack.json', linksBackJS, 'utf8', function(err) {
     if (err) throw err;
   });
@@ -328,30 +332,39 @@ function printLeave(graph) {
     //visGraphNodes.push(itemN);
     visGraphNodes.push(nodeElement.id);
   });
+  var nodeG = JSON.stringify(nodesJS);
+  jsonfile.writeFile('visGraphNodes.json', nodeG, 'utf8');
 
+  var file = 'visGraphNodes.json'
+  var obj = {
+    name: 'JP'
+  }
+
+  jsonfile.writeFileSync(file, obj, {
+    flag: 'a'
+  })
   try {
-    var jsonfile = require('jsonfile');
     var objLinks;
-    jsonfile.readFile('links.json', 'utf8', function(err, data) {
-      if (err) throw err;
-      //objLinks = JSON.parse(data);
-      //console.log(data);
-      var resLink = '[' + JSON.stringify(data) + ']';
-      jsonfile.writeFile('views/links.json', resLink, 'utf8', function(err) {
-        if (err) throw err;
-      });
-    });
+    // jsonfile.readFile('links.json', 'utf8', function(err, data) {
+    //   if (err) throw err;
+    //   //objLinks = JSON.parse(data);
+    //   //console.log(data);
+    //   var resLink = '[' + JSON.stringify(data) + ']';
+    //   jsonfile.writeFile('views/links.json', resLink, 'utf8', function(err) {
+    //     if (err) throw err;
+    //   });
+    // });
 
     var objNodes;
-    jsonfile.readFile('nodes.json', 'utf8', function(err, data) {
-      if (err) throw err;
-      //objNodes = JSON.parse(data);
-      //console.log(objNodes);
-      var resNodes = '[' + JSON.stringify(data) + ']';
-      jsonfile.writeFile('views/nodes.json', resNodes, 'utf8', function(error) {
-        if (error) throw error;
-      });
-    });
+    // jsonfile.readFile('nodes.json', 'utf8', function(err, data) {
+    //   if (err) throw err;
+    //   //objNodes = JSON.parse(data);
+    //   //console.log(objNodes);
+    //   var resNodes = '[' + JSON.stringify(data) + ']';
+    //   jsonfile.writeFile('views/nodes.json', resNodes, 'utf8', function(error) {
+    //     if (error) throw error;
+    //   });
+    // });
   } catch (e) {
     console.log(e);
   }

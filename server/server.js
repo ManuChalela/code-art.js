@@ -63,15 +63,16 @@ app.get("/getGraph", (req, res) => {
   console.log("Getting graph info ");
   var parserOptions = {
     edges: {
-      inheritColors: false
+      inheritColors: false,
+      arrows: 'to'
     },
     nodes: {
       fixed: true,
       parseColor: false
     }
   }
-  var nodes = jsonfile.readFileSync('views/nodes.json');
-  var edges = jsonfile.readFileSync('views/links.json');
+  var nodes = jsonfile.readFileSync('./nodes.json');
+  var edges = jsonfile.readFileSync('./links.json');
 
   var graph = {
     nodes: nodes,

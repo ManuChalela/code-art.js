@@ -1,6 +1,7 @@
 .idea/
 package-lock.json
 views/code-art-graph_back.html
+backs/
 # Logs
 logs
 *.log
