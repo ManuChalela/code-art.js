@@ -268,10 +268,6 @@ function leave(node) {
         if (err) throw err;
       });
       grapho = graph;
-      // var graphoJS = JSON.stringify(grapho);
-      // fs.writeFile('grapho.json', graphoJS, 'utf8', function(err) {
-      //   if (err) throw err;
-      // });
     }
   }
 }
@@ -332,9 +328,33 @@ function printLeave(graph) {
     //visGraphNodes.push(itemN);
     visGraphNodes.push(nodeElement.id);
   });
-  fs.writeFile('visGraphNodes.json', visGraphNodes, 'utf8', function(err) {
-    if (err) throw err;
-  });
+
+  try {
+    var jsonfile = require('jsonfile');
+    var objLinks;
+    jsonfile.readFile('links.json', 'utf8', function(err, data) {
+      if (err) throw err;
+      //objLinks = JSON.parse(data);
+      //console.log(data);
+      var resLink = '[' + JSON.stringify(data) + ']';
+      jsonfile.writeFile('views/links.json', resLink, 'utf8', function(err) {
+        if (err) throw err;
+      });
+    });
+
+    var objNodes;
+    jsonfile.readFile('nodes.json', 'utf8', function(err, data) {
+      if (err) throw err;
+      //objNodes = JSON.parse(data);
+      //console.log(objNodes);
+      var resNodes = '[' + JSON.stringify(data) + ']';
+      jsonfile.writeFile('views/nodes.json', resNodes, 'utf8', function(error) {
+        if (error) throw error;
+      });
+    });
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 function isVarDefined(varname, scopeChain) {
