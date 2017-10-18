@@ -80,3 +80,10 @@ app.get("/getGraph", (req, res) => {
   }
   res.send(graph);
 });
+
+app.get("/getWordCloud", (req, res) => {
+  console.log("Getting WordCloud info ");
+  var list = jsonfile.readFileSync('views/list.json');
+  //console.log(list);
+  res.send(list);
+});

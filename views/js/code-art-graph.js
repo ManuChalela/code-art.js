@@ -23,3 +23,13 @@ $("#get-nodes").on("click", function() {
     }
   });
 });
+$("#get-wordcloud").on("click", function() {
+  $.get('/getWordCloud', function(list) {
+    if (list) {
+      console.log("hola list!");
+      WordCloud(document.getElementById('my_canvas'), {
+        list: list
+      });
+    }
+  });
+});

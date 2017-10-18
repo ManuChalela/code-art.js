@@ -290,12 +290,23 @@ function printLeave(graph) {
   });
   //var nodesJS = JSON.stringify(graph.serialize().nodes);
   var nodesJS = [];
+  var itemListJS = [];
   for (var i = 0; i < graph.serialize().nodes.length; i++) {
     var itemN = new itemNode(i, graph.serialize().nodes[i].id, 0);
     nodesJS.push(JSON.stringify(itemN));
+
+    var itemList = [];
+    itemList.push(graph.serialize().nodes[i].id, 1);
+    itemListJS.push(JSON.stringify(itemList));
+
   }
+  //console.log(itemListJS);
   nodesJS = "[" + nodesJS + "]";
   fs.writeFile('nodes.json', nodesJS, 'utf8', function(err) {
+    if (err) throw err;
+  });
+  itemListJS = "[" + itemListJS + "]";
+  fs.writeFile('views/list.json', itemListJS, 'utf8', function(err) {
     if (err) throw err;
   });
   var linksJS = [];
