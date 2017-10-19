@@ -19,6 +19,6 @@ function Random2(x) {
   return Absoluto(x);
 }
 
-function Mult(x,y,z){
+function Mult(x, y, z) {
   var w = x * Absoluto(y) * z;
 }

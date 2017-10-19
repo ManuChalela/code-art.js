@@ -51,7 +51,7 @@ app.set('view engine', 'html')
 app.use(express.static('./views'));
 
 app.listen(8080, () => {
-  console.log("Code-art-server started. Listening on port 8080");
+  console.log("Server started on port 8080. Go to http://localhost:8080");
 });
 
 

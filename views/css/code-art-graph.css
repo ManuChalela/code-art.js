@@ -14,7 +14,7 @@ body {
     border: 2px solid #9a9898;
 }
 
-#get-nodes{
+#get-nodes, #get-wordcloud{
     float:right;
     background: #2B3840;
     color: white;

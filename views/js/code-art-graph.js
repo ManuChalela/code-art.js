@@ -25,10 +25,10 @@ $("#get-nodes").on("click", function() {
 });
 $("#get-wordcloud").on("click", function() {
   $.get('/getWordCloud', function(list) {
+    var wordcloud = document.getElementById('my_wordcloud');
     if (list) {
-      console.log("hola list!");
       console.log(list);
-      var option1 = {
+      var option = {
         color: '#15a4fa',
         noDataLoadingOption: {
           backgroundColor: '#eee',
@@ -39,12 +39,12 @@ $("#get-wordcloud").on("click", function() {
           }
         }
       }
-      var wc1 = new Js2WordCloud(document.getElementById('my_wordcloud'))
-      wc1.showLoading()
+      var wc = new Js2WordCloud(wordcloud);
+      wc.showLoading()
       setTimeout(function() {
-        wc1.hideLoading()
-        wc1.setOption(option1)
-      }, 2000)
+        wc.hideLoading()
+        wc.setOption(option)
+      }, 10)
 
       var option8 = {
         tooltip: {
@@ -59,13 +59,14 @@ $("#get-wordcloud").on("click", function() {
         ellipticity: 1
       }
       setTimeout(function() {
-        wc1.setOption(option8)
+        wc.setOption(option8)
       }, 4000)
 
       window.onresize = function() {
-        wc1.resize()
+        wc.resize()
       }
-
+    } else {
+      wordcloud.innerHTML = "Unable to construct wordcloud.";
     }
   });
 });
