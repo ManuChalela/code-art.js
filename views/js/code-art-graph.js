@@ -54,7 +54,9 @@ $("#get-wordcloud").on("click", function() {
           }
         },
         list: list,
-        color: 'blue'
+        color: '#15a4fa',
+        shape: 'circle',
+        ellipticity: 1
       }
       setTimeout(function() {
         wc1.setOption(option8)
