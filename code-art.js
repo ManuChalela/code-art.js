@@ -22,6 +22,7 @@ var requiresModules = [];
 var variablesTotal = [];
 var functionList = [];
 var namesExternals = [];
+var externalsTotal = [];
 estraverse.traverse(ast, {
   enter: enter,
   leave: leave
@@ -82,9 +83,11 @@ function enter(node) {
     } else if (node.callee.type === "Identifier") {
       nameExternal = node.callee.name;
     }
-    // Agrego como external cuando no estoy en scope global
-    if (nameExternal != undefined && currentScope !== scopeChain[0])
+    // Agrego como external cuando no estoy en el scope global
+    if (nameExternal != undefined && currentScope !== scopeChain[0]) {
       namesExternals.push(nameExternal);
+      checkExternalTotal(externalsTotal, nameExternal);
+    }
   }
 }
 
@@ -101,6 +104,11 @@ function ItemVariable(name) {
 
 function ItemExternal(name) {
   this.name = name;
+}
+
+function ItemExternalTotal(name, count) {
+  this.name = name;
+  this.count = count;
 }
 
 function findById(source, id) {
@@ -197,6 +205,16 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
   }
 }
 
+function checkExternalTotal(externalsTotal, nameExternal) {
+  var indiceExternalTotal = arrayObjectIndexOf(externalsTotal, nameExternal, "name");
+  if (indiceExternalTotal == -1) {
+    var itemExternalTotal = new ItemExternalTotal(nameExternal, 0)
+    externalsTotal.push(itemExternalTotal);
+  } else {
+    externalsTotal[indiceExternalTotal].count = externalsTotal[indiceExternalTotal].count + 1;
+  }
+}
+
 function addExternalToFunction(nameItemFunction, namesExternals, functionList) {
   var locals = [];
   var globals = [];
@@ -212,6 +230,7 @@ function addExternalToFunction(nameItemFunction, namesExternals, functionList) {
         } else {
           console.log("ya se encontró: " + nameExternal);
         }
+        checkExternalTotal(externalsTotal, nameExternal);
       });
       functionList.push(itemFunction);
     } else {
@@ -221,6 +240,7 @@ function addExternalToFunction(nameItemFunction, namesExternals, functionList) {
           var itemExternal = new ItemExternal(nameExternal);
           var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
           itemFunction.externals.push(itemExternal);
+          checkExternalTotal(externalsTotal, nameExternal);
           functionList.push(itemFunction);
         });
       } else { // Encontró el nombre de la function
@@ -230,6 +250,7 @@ function addExternalToFunction(nameItemFunction, namesExternals, functionList) {
           if (indiceExternal == -1) {
             //itemFunction.externals.push(itemExternal);
             functionList[indice].externals.push(itemExternal);
+            checkExternalTotal(externalsTotal, nameExternal);
           } else {
             console.log("ya se encontró: " + nameExternal);
           }
@@ -325,6 +346,20 @@ function printLeave(graph) {
     if (err) throw err;
   });
 
+  // Agrego el externalsTotal en views/edges.json
+  var edgesJS = [];
+  for (var i = 0; i < externalsTotal.length; i++) {
+    //var itemET = new ItemExternalTotal(externalsTotal[i].name, 0);
+    //edgesJS.push(JSON.stringify(itemET));
+    var itemListET = [];
+    itemListET.push(externalsTotal[i].name, externalsTotal[i].count);
+    edgesJS.push(JSON.stringify(itemListET));
+  }
+  var edgesETJS = "[" + edgesJS + "]";
+  fs.writeFile('views/edges.json', edgesETJS, 'utf8', function(err) {
+    if (err) throw err;
+  });
+
   /*
     var nodesBackJS = JSON.stringify(graph.serialize().nodes);
     fs.writeFile('nodesBack.json', nodesBackJS, 'utf8', function(err) {
@@ -401,11 +436,20 @@ function processVariablesTotal(variablesTotal) {
   variablesTotal.forEach(function(i) {
     count[i] = (count[i] || 0) + 1;
   });
-  console.log(count);
+  //console.log(count);
 }
 processVariablesTotal(variablesTotal);
 printLeave(grapho);
 
+// function processExternalsTotal(externalsTotal) {
+//   var count = {};
+//   externalsTotal.forEach(() => {
+//     count[i] = (count[i] || 0) + 1;
+//   });
+// }
+//
+// processExternalsTotal(externalsTotal);
+console.log(JSON.stringify(externalsTotal));
 
 function arrayObjectIndexOf(myArray, searchTerm, property) {
   for (var i = 0, len = myArray.length; i < len; i++) {

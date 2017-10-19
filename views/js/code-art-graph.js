@@ -35,7 +35,7 @@ $("#get-wordcloud").on("click", function() {
           text: '',
           textStyle: {
             color: '#f00',
-            fontSize: 400
+            fontSize: 20
           }
         }
       }
