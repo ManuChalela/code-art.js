@@ -8,7 +8,7 @@ body {
     color: #e2dfdf;
 }
 
-#mynetwork {
+#mynetwork, #my_wordcloud {
     height: 750px;
     background-color:#e2dfdf;
     border: 2px solid #9a9898;
