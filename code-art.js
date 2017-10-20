@@ -54,15 +54,21 @@ function enter(node) {
       nameGlobal = 'global';
     currentScope.push(name);
     variablesTotal.push(name);
-    if (node.init.type === 'CallExpression') {
-      var nameExternal;
-      if (node.init.callee != undefined) {
-        if (nameExternal != undefined && nameGlobal != 'global') {
-          //processRequires(node);
-          processIdentifiersCall(node);
+    if (node.init != undefined) {
+      if (node.init.type != undefined) {
+        if (node.init.type === 'CallExpression') {
+          var nameExternal;
+          if (node.init.callee != undefined) {
+            if (nameExternal != undefined && nameGlobal != 'global') {
+              //processRequires(node);
+              processIdentifiersCall(node);
+            } else {
+              console.log("la variable es global");
+              //processIdentifiersCall(node);
+            }
+          }
         } else {
-          console.log("la variable es global");
-          //processIdentifiersCall(node);
+          console.log("node.init.callee is undefined");
         }
       }
     }
