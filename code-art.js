@@ -45,7 +45,7 @@ function enter(node) {
   if (createsNewScope(node)) {
     scopeChain.push([]);
   }
-  // console.log(node);
+  //console.log(node);
   if (node.type === 'VariableDeclarator') {
     var currentScope = scopeChain[scopeChain.length - 1];
     var name = node.id.name;
@@ -58,8 +58,11 @@ function enter(node) {
       var nameExternal;
       if (node.init.callee != undefined) {
         if (nameExternal != undefined && nameGlobal != 'global') {
-          nameExternal = node.init.name;
-          namesExternals.push(nameExternal);
+          //processRequires(node);
+          processIdentifiersCall(node);
+        } else {
+          console.log("la variable es global");
+          //processIdentifiersCall(node);
         }
       }
     }
@@ -88,6 +91,33 @@ function enter(node) {
       namesExternals.push(nameExternal);
       checkExternalTotal(externalsTotal, nameExternal);
     }
+  }
+}
+
+function processIdentifiersCall(node) {
+  if (node.init.callee.type != undefined) {
+    //console.log(node);
+    if (node.init.callee.name != undefined) {
+      nameExternal = node.init.callee.name;
+      console.log(nameExternal);
+    } else if (node.init.name != undefined) {
+      nameExternal = node.init.name;
+      console.log(nameExternal);
+    } else {
+
+    }
+    namesExternals.push(nameExternal);
+  } else {
+    console.log("callee.type es undefined");
+  }
+  console.log(namesExternals);
+}
+
+function processRequires(node) {
+  if (node.init != null && node.init.type != null && node.init.type === 'CallExpression' && node.init.callee.name != undefined) {
+    nameExternal = node.init.calle.name;
+    console.log(nameExternal);
+    //namesExternals.push(nameExternal);
   }
 }
 
@@ -295,89 +325,74 @@ function leave(node) {
 }
 
 function printLeave(graph) {
-  console.log("FunctionList: " + JSON.stringify(functionList));
-  //console.log("namesExternals: " + JSON.stringify(namesExternals));
-  console.log("El grafo de referencias es: ");
-  console.log(graph.topologicalSort());
-  console.log("El grafo serializado es: ");
-  console.log(graph.serialize());
-  // console.log("Solo serializados nodo: ");
-  // console.log(graph.serialize().nodes);
-  // console.log("Solo serializados links: ");
-  // console.log(graph.serialize().links);
-  var graphoJS = JSON.stringify(graph.serialize());
-  fs.writeFile('grapho.json', graphoJS, 'utf8', function(err) {
-    if (err) throw err;
-  });
-  //var nodesJS = JSON.stringify(graph.serialize().nodes);
-  var nodesJS = [];
-  var itemListJS = [];
-  for (var i = 0; i < graph.serialize().nodes.length; i++) {
-    var itemN = new itemNode(i, graph.serialize().nodes[i].id, 0);
-    nodesJS.push(JSON.stringify(itemN));
-
-    var itemList = [];
-    itemList.push(graph.serialize().nodes[i].id, 1);
-    itemListJS.push(JSON.stringify(itemList));
-
+  if (functionList.length > 0) {
+    console.log("FunctionList: " + JSON.stringify(functionList));
+  } else {
+    console.log("FunctionList vacía. No existen referencias externas en su código.");
   }
-  //console.log(itemListJS);
-  nodesJS = "[" + nodesJS + "]";
-  fs.writeFile('nodes.json', nodesJS, 'utf8', function(err) {
-    if (err) throw err;
-  });
-  itemListJS = "[" + itemListJS + "]";
-  fs.writeFile('views/list.json', itemListJS, 'utf8', function(err) {
-    if (err) throw err;
-  });
-  var linksJS = [];
-  for (var i = 0; i < graph.serialize().links.length; i++) {
-    var fromIndex = arrayObjectIndexOf(graph.serialize().nodes, graph.serialize().links[i].source, "id");
-    var toIndex = arrayObjectIndexOf(graph.serialize().nodes, graph.serialize().links[i].target, "id");
-    var itemLink = {
-      from: fromIndex,
-      to: toIndex,
-      arrows: 'to'
-    };
-    linksJS.push(JSON.stringify(itemLink));
-  }
-  linksJS = "[" + linksJS + "]";
-  fs.writeFile('links.json', linksJS, 'utf8', function(err) {
-    if (err) throw err;
-  });
-
-  // Agrego el externalsTotal en views/edges.json
-  var edgesJS = [];
-  for (var i = 0; i < externalsTotal.length; i++) {
-    //var itemET = new ItemExternalTotal(externalsTotal[i].name, 0);
-    //edgesJS.push(JSON.stringify(itemET));
-    var itemListET = [];
-    itemListET.push(externalsTotal[i].name, externalsTotal[i].count);
-    edgesJS.push(JSON.stringify(itemListET));
-  }
-  var edgesETJS = "[" + edgesJS + "]";
-  fs.writeFile('views/edges.json', edgesETJS, 'utf8', function(err) {
-    if (err) throw err;
-  });
-
-  /*
-    var nodesBackJS = JSON.stringify(graph.serialize().nodes);
-    fs.writeFile('nodesBack.json', nodesBackJS, 'utf8', function(err) {
+  if (graph) {
+    console.log("El grafo de referencias es: ");
+    console.log(graph.topologicalSort());
+    console.log("El grafo serializado es: ");
+    console.log(graph.serialize());
+    var graphoJS = JSON.stringify(graph.serialize());
+    fs.writeFile('grapho.json', graphoJS, 'utf8', function(err) {
       if (err) throw err;
     });
-    var linksBackJS = JSON.stringify(graph.serialize().links);
-    linksBackJS = "'[" + linksBackJS + "]";
-    fs.writeFile('linksBack.json', linksBackJS, 'utf8', function(err) {
+    var nodesJS = [];
+    var itemListJS = [];
+    for (var i = 0; i < graph.serialize().nodes.length; i++) {
+      var itemN = new itemNode(i, graph.serialize().nodes[i].id, 0);
+      nodesJS.push(JSON.stringify(itemN));
+
+      var itemList = [];
+      itemList.push(graph.serialize().nodes[i].id, 1);
+      itemListJS.push(JSON.stringify(itemList));
+    }
+    nodesJS = "[" + nodesJS + "]";
+    fs.writeFile('nodes.json', nodesJS, 'utf8', function(err) {
       if (err) throw err;
     });
-    var visGraphJS = graph.serialize();
-    var visGraphNodes = [];
-    visGraphJS.nodes.forEach(function(nodeElement) {
-      var indice = arrayObjectIndexOf(visGraphJS.nodes, nodeElement.id, "id");
-      var itemN = new itemNode(indice, nodeElement.id, 0);
-      //visGraphNodes.push(itemN);
-      visGraphNodes.push(nodeElement.id);
-    });*/
+    itemListJS = "[" + itemListJS + "]";
+    fs.writeFile('views/list.json', itemListJS, 'utf8', function(err) {
+      if (err) throw err;
+    });
+    var linksJS = [];
+    for (var i = 0; i < graph.serialize().links.length; i++) {
+      var fromIndex = arrayObjectIndexOf(graph.serialize().nodes, graph.serialize().links[i].source, "id");
+      var toIndex = arrayObjectIndexOf(graph.serialize().nodes, graph.serialize().links[i].target, "id");
+      var itemLink = {
+        from: fromIndex,
+        to: toIndex,
+        arrows: 'to'
+      };
+      linksJS.push(JSON.stringify(itemLink));
+    }
+    linksJS = "[" + linksJS + "]";
+    fs.writeFile('links.json', linksJS, 'utf8', function(err) {
+      if (err) throw err;
+    });
+
+    // Agrego el externalsTotal en views/edges.json
+    var edgesJS = [];
+    for (var i = 0; i < externalsTotal.length; i++) {
+      var itemListET = [];
+      itemListET.push(externalsTotal[i].name, externalsTotal[i].count);
+      edgesJS.push(JSON.stringify(itemListET));
+    }
+    var edgesETJS = "[" + edgesJS + "]";
+    fs.writeFile('views/edges.json', edgesETJS, 'utf8', function(err) {
+      if (err) throw err;
+    });
+    if (externalsTotal.length > 0) {
+      console.log("ExternalTotal: ");
+      console.log(JSON.stringify(externalsTotal));
+    } else {
+      console.log("externalsTotal vacío.");
+    }
+  } else {
+    console.log("Grafo vacío.");
+  }
 }
 
 function isVarDefined(varname, scopeChain) {
@@ -440,16 +455,6 @@ function processVariablesTotal(variablesTotal) {
 }
 processVariablesTotal(variablesTotal);
 printLeave(grapho);
-
-// function processExternalsTotal(externalsTotal) {
-//   var count = {};
-//   externalsTotal.forEach(() => {
-//     count[i] = (count[i] || 0) + 1;
-//   });
-// }
-//
-// processExternalsTotal(externalsTotal);
-console.log(JSON.stringify(externalsTotal));
 
 function arrayObjectIndexOf(myArray, searchTerm, property) {
   for (var i = 0, len = myArray.length; i < len; i++) {
