@@ -18,6 +18,27 @@ $("#get-nodes").on("click", function() {
         }
       };
       network = new vis.Network(container, graph, options);
+      //console.log(network);
+      //var downloadNetwork = document.getElementById("mynetwork");
+      // var imageNetwork = document.getElementById("mynetwork").toDataURL("image/png")
+      //   .replace("image/png", "image/octet-stream");
+      // download.setAttribute("href", imageNetwork);
+      network.on("afterDrawing", function(ctx) {
+        var dataURL = ctx.canvas.toDataURL();
+        //   document.getElementById('canvasImg').src = dataURL;
+        document.getElementById('mynetwork').src = dataURL;
+        console.log("afterDrawing");
+        //domtoimage.toJpeg(document.getElementById('canvasImg'), {
+        domtoimage.toJpeg(document.getElementById('mynetwork'), {
+            quality: 0.95
+          })
+          .then(function(dataUrl) {
+            var link = document.createElement('a');
+            link.download = 'my_network.jpeg';
+            link.href = dataUrl;
+            link.click();
+          });
+      });
     } else {
       container.innerHTML = "Unable to construct graph.";
     }
@@ -65,6 +86,22 @@ $("#get-wordcloud").on("click", function() {
       window.onresize = function() {
         wc.resize()
       }
+      wordcloud.on("afterDrawing", function(ctx) {
+        var dataURL = ctx.canvas.toDataURL();
+        //   document.getElementById('canvasImg').src = dataURL;
+        document.getElementById('canvasImgWC').src = dataURL;
+        console.log("wordcloud");
+        //domtoimage.toJpeg(document.getElementById('canvasImg'), {
+        domtoimage.toJpeg(document.getElementById('my_wordcloud'), {
+            quality: 0.95
+          })
+          .then(function(dataUrl) {
+            var link = document.createElement('a');
+            link.download = 'my_wordcloud.jpeg';
+            link.href = dataUrl;
+            link.click();
+          });
+      });
     } else {
       wordcloud.innerHTML = "Unable to construct wordcloud.";
     }
