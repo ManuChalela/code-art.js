@@ -57,7 +57,7 @@ app.get("/saveGraph", (req, res) => {
   res.send(graphGlobal);
 });
 
-app.get("/saveWordcloud", (req, res) => {
-  console.log("Saving wordcloud info ");
-  //res.send(graph);
-});
+// app.get("/saveWordcloud", (req, res) => {
+//   console.log("Saving wordcloud info ");
+//   //res.send(graph);
+// });

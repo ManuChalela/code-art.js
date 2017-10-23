@@ -107,24 +107,41 @@ $("#save-nodes").on("click", function() {
 });
 
 $("#save-wordcloud").on("click", function() {
-  $.get('/saveWordcloud', function() {
-    var container = document.getElementById('my_wordcloud');
-    var canvasWordcloud = document.getElementById('canvasWordcloud');
-    var ctx = canvasWordcloud.getContext('2d');
-    var dataURL = canvasWordcloud.toDataURL();
-    document.getElementById('my_wordcloud').src = dataURL;
-    //canvasWordcloud.src = dataURL;
-    console.log(dataURL);
-    console.log("afterDrawing WordCloud global");
-    domtoimage.toJpeg(document.getElementById('my_wordcloud'), {
-        quality: 0.95
-      })
-      .then(function(dataUrl) {
-        var link = document.createElement('a');
-        link.download = 'my_wordcloud.jpeg';
-        link.href = dataUrl;
-        link.click();
-      });
-
-  });
+  // $.get('/saveWordcloud', function() {
+  //   var container = document.getElementById('my_wordcloud');
+  //   var canvasWordcloud = document.getElementById('canvasWordcloud');
+  //   var ctx = canvasWordcloud.getContext('2d');
+  //   var dataURL = canvasWordcloud.toDataURL();
+  //   document.getElementById('my_wordcloud').src = dataURL;
+  //   //canvasWordcloud.src = dataURL;
+  //   console.log(dataURL);
+  //   console.log("afterDrawing WordCloud global");
+  //   domtoimage.toJpeg(document.getElementById('my_wordcloud'), {
+  //       quality: 0.95
+  //     })
+  //     .then(function(dataUrl) {
+  //       var link = document.createElement('a');
+  //       link.download = 'my_wordcloud.jpeg';
+  //       link.href = dataUrl;
+  //       link.click();
+  //     });
+  //
+  // });
+  var container = document.getElementById('my_wordcloud');
+  var canvasWordcloud = document.getElementById('canvasWordcloud');
+  var ctx = canvasWordcloud.getContext('2d');
+  var dataURL = canvasWordcloud.toDataURL();
+  document.getElementById('my_wordcloud').src = dataURL;
+  //canvasWordcloud.src = dataURL;
+  console.log(dataURL);
+  console.log("afterDrawing WordCloud global");
+  domtoimage.toJpeg(document.getElementById('my_wordcloud'), {
+      quality: 0.95
+    })
+    .then(function(dataUrl) {
+      var link = document.createElement('a');
+      link.download = 'my_wordcloud.jpeg';
+      link.href = dataUrl;
+      link.click();
+    });
 });
