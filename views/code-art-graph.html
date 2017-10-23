@@ -10,16 +10,18 @@
         <div class="container">
               <div class="jumbotron">
                     <h2>Graph | Code Art JS</h2>
-                    <button id="get-nodes" type="button" class="btn">Create graph </button>
+                    <button id="get-nodes" type="button" class="btn">Create graph</button>
+                    <button id="save-nodes" type="button" class="btn">Download graph</button>
               </div>
               <div id="mynetwork" style="text-align: center"></div>
-              <img id="canvasImg" style="display: none;">
+              <canvas id="canvasGraph"><img id="networkImg" style="display: none;"></canvas>
               <div class="jumbotron">
                 <h2>WordCloud | Code Art JS</h2>
-                  <button id="get-wordcloud" type="button" class="btn">Create wordcloud </button>
+                  <button id="get-wordcloud" type="button" class="btn">Create wordcloud</button>
+                  <button id="save-wordcloud" type="button" class="btn">Download wordcloud</button>
               </div>
               <div id="my_wordcloud" style="text-align: center"></div>
-              <img id="canvasImgWC" style="display: none;">
+              <canvas id="canvasWordcloud"><img id="wordcloudImg" style="display: none;"></canvas>
         </div>
     </body>
     <script src="http://visjs.org/dist/vis.js"></script>

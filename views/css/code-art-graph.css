@@ -14,13 +14,25 @@ body {
     border: 2px solid #9a9898;
 }
 
+/*#get-nodes, #get-wordcloud{
+    float:right;
+    background: #2B3840;
+    color: white;
+    border: 1px solid #9a9898;
+}*/
+
 #get-nodes, #get-wordcloud{
+    float:left;
+    background: #2B3840;
+    color: white;
+    border: 1px solid #9a9898;
+}
+#save-nodes, #save-wordcloud{
     float:right;
     background: #2B3840;
     color: white;
     border: 1px solid #9a9898;
 }
-
 #get-nodes:hover{
    border: 1px solid #e2dfdf;
 }

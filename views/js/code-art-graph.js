@@ -1,3 +1,5 @@
+//var networkGlobal;
+var wordcloudGlobal;
 $("#get-nodes").on("click", function() {
   $.get('/getGraph', function(graph) {
     var container = document.getElementById('mynetwork');
@@ -18,27 +20,7 @@ $("#get-nodes").on("click", function() {
         }
       };
       network = new vis.Network(container, graph, options);
-      //console.log(network);
-      //var downloadNetwork = document.getElementById("mynetwork");
-      // var imageNetwork = document.getElementById("mynetwork").toDataURL("image/png")
-      //   .replace("image/png", "image/octet-stream");
-      // download.setAttribute("href", imageNetwork);
-      network.on("afterDrawing", function(ctx) {
-        var dataURL = ctx.canvas.toDataURL();
-        //   document.getElementById('canvasImg').src = dataURL;
-        document.getElementById('mynetwork').src = dataURL;
-        console.log("afterDrawing");
-        //domtoimage.toJpeg(document.getElementById('canvasImg'), {
-        domtoimage.toJpeg(document.getElementById('mynetwork'), {
-            quality: 0.95
-          })
-          .then(function(dataUrl) {
-            var link = document.createElement('a');
-            link.download = 'my_network.jpeg';
-            link.href = dataUrl;
-            link.click();
-          });
-      });
+      networkGlobal = network;
     } else {
       container.innerHTML = "Unable to construct graph.";
     }
@@ -86,24 +68,63 @@ $("#get-wordcloud").on("click", function() {
       window.onresize = function() {
         wc.resize()
       }
-      wordcloud.on("afterDrawing", function(ctx) {
-        var dataURL = ctx.canvas.toDataURL();
-        //   document.getElementById('canvasImg').src = dataURL;
-        document.getElementById('canvasImgWC').src = dataURL;
-        console.log("wordcloud");
-        //domtoimage.toJpeg(document.getElementById('canvasImg'), {
-        domtoimage.toJpeg(document.getElementById('my_wordcloud'), {
-            quality: 0.95
-          })
-          .then(function(dataUrl) {
-            var link = document.createElement('a');
-            link.download = 'my_wordcloud.jpeg';
-            link.href = dataUrl;
-            link.click();
-          });
-      });
     } else {
       wordcloud.innerHTML = "Unable to construct wordcloud.";
     }
+  });
+});
+$("#save-nodes").on("click", function() {
+  $.get('/saveGraph', function(graphGlobal) {
+    var container = document.getElementById('mynetwork');
+    if (graphGlobal) {
+      console.log("graphGlobal")
+      console.log(graphGlobal);
+      //var ctx = graphGlobal.getContext('2d');
+      //var ctx;
+      //let ctx = container.get(0).getContext('2d');
+      var canvasGraph = document.getElementById('canvasGraph');
+      var ctx = canvasGraph.getContext('2d');
+
+      var dataURL = canvasGraph.toDataURL();
+      //   document.getElementById('canvasImg').src = dataURL;
+      document.getElementById('mynetwork').src = dataURL;
+      console.log(dataURL);
+      console.log("afterDrawing networkGlobal");
+      //domtoimage.toJpeg(document.getElementById('canvasImg'), {
+      domtoimage.toJpeg(document.getElementById('mynetwork'), {
+          quality: 0.95
+        })
+        .then(function(dataUrl) {
+          var link = document.createElement('a');
+          link.download = 'my_network.jpeg';
+          link.href = dataUrl;
+          link.click();
+        });
+    } else {
+      container.innerHTML = "Unable to download graph.";
+    }
+  });
+});
+
+$("#save-wordcloud").on("click", function() {
+  $.get('/saveWordcloud', function() {
+    var container = document.getElementById('my_wordcloud');
+    var canvasWordcloud = document.getElementById('canvasWordcloud');
+    var ctx = canvasWordcloud.getContext('2d');
+    var dataURL = canvasWordcloud.toDataURL();
+    document.getElementById('my_wordcloud').src = dataURL;
+    //canvasWordcloud.src = dataURL;
+    console.log(dataURL);
+    console.log("afterDrawing WordCloud global");
+    domtoimage.toJpeg(document.getElementById('my_wordcloud'), {
+        quality: 0.95
+      })
+      .then(function(dataUrl) {
+        var link = document.createElement('a');
+        link.download = 'my_wordcloud.jpeg';
+        link.href = dataUrl;
+        link.click();
+      });
+
   });
 });
