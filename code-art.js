@@ -5,7 +5,6 @@ var estraverse = require('estraverse');
 var jsonfile = require('jsonfile');
 
 var filename = process.argv[2];
-//var filename = 'test\\sourceAbs.js';
 console.log('Processing', filename);
 try {
   var data = fs.readFileSync(filename, 'utf8');
@@ -31,8 +30,6 @@ estraverse.traverse(ast, {
 function Locals(name) {
   this.name = name;
 }
-//var Graph = require("graph-data-structure");
-//var grapho = Graph();
 var grapho;
 
 function itemNode(id, label, group) {
@@ -60,11 +57,9 @@ function enter(node) {
           var nameExternal;
           if (node.init.callee != undefined) {
             if (nameExternal != undefined && nameGlobal != 'global') {
-              //processRequires(node);
               processIdentifiersCall(node);
             } else {
               console.log("la variable es global");
-              //processIdentifiersCall(node);
             }
           }
         } else {

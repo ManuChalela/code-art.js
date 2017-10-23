@@ -5,7 +5,7 @@ var cons = require('consolidate');
 var jsonfile = require('jsonfile');
 var vis = require('vis');
 
-var graphGlobal, wordcloudGlobal;
+var graphGlobal;
 app.engine('html', cons.swig)
 app.set('view engine', 'html')
 app.use(express.static('./views'));
@@ -13,7 +13,6 @@ app.use(express.static('./views'));
 app.listen(8080, () => {
   console.log("Server started on port 8080. Go to http://localhost:8080");
 });
-
 
 app.get("/", function(req, res) {
   res.render('code-art-graph')
@@ -45,10 +44,7 @@ app.get("/getGraph", (req, res) => {
 
 app.get("/getWordCloud", (req, res) => {
   console.log("Getting WordCloud info ");
-  //var list = jsonfile.readFileSync('views/list.json');
   var list = jsonfile.readFileSync('views/edges.json');
-  //console.log(list);
-  //networkGlobal = list;
   res.send(list);
 });
 
@@ -56,8 +52,3 @@ app.get("/saveGraph", (req, res) => {
   console.log("Saving graph info ");
   res.send(graphGlobal);
 });
-
-// app.get("/saveWordcloud", (req, res) => {
-//   console.log("Saving wordcloud info ");
-//   //res.send(graph);
-// });

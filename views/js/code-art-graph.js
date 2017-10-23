@@ -1,4 +1,3 @@
-//var networkGlobal;
 var wordcloudGlobal;
 $("#get-nodes").on("click", function() {
   $.get('/getGraph', function(graph) {
@@ -77,20 +76,12 @@ $("#save-nodes").on("click", function() {
   $.get('/saveGraph', function(graphGlobal) {
     var container = document.getElementById('mynetwork');
     if (graphGlobal) {
-      console.log("graphGlobal")
-      console.log(graphGlobal);
-      //var ctx = graphGlobal.getContext('2d');
-      //var ctx;
-      //let ctx = container.get(0).getContext('2d');
       var canvasGraph = document.getElementById('canvasGraph');
       var ctx = canvasGraph.getContext('2d');
-
       var dataURL = canvasGraph.toDataURL();
-      //   document.getElementById('canvasImg').src = dataURL;
       document.getElementById('mynetwork').src = dataURL;
       console.log(dataURL);
       console.log("afterDrawing networkGlobal");
-      //domtoimage.toJpeg(document.getElementById('canvasImg'), {
       domtoimage.toJpeg(document.getElementById('mynetwork'), {
           quality: 0.95
         })
@@ -107,32 +98,11 @@ $("#save-nodes").on("click", function() {
 });
 
 $("#save-wordcloud").on("click", function() {
-  // $.get('/saveWordcloud', function() {
-  //   var container = document.getElementById('my_wordcloud');
-  //   var canvasWordcloud = document.getElementById('canvasWordcloud');
-  //   var ctx = canvasWordcloud.getContext('2d');
-  //   var dataURL = canvasWordcloud.toDataURL();
-  //   document.getElementById('my_wordcloud').src = dataURL;
-  //   //canvasWordcloud.src = dataURL;
-  //   console.log(dataURL);
-  //   console.log("afterDrawing WordCloud global");
-  //   domtoimage.toJpeg(document.getElementById('my_wordcloud'), {
-  //       quality: 0.95
-  //     })
-  //     .then(function(dataUrl) {
-  //       var link = document.createElement('a');
-  //       link.download = 'my_wordcloud.jpeg';
-  //       link.href = dataUrl;
-  //       link.click();
-  //     });
-  //
-  // });
   var container = document.getElementById('my_wordcloud');
   var canvasWordcloud = document.getElementById('canvasWordcloud');
   var ctx = canvasWordcloud.getContext('2d');
   var dataURL = canvasWordcloud.toDataURL();
   document.getElementById('my_wordcloud').src = dataURL;
-  //canvasWordcloud.src = dataURL;
   console.log(dataURL);
   console.log("afterDrawing WordCloud global");
   domtoimage.toJpeg(document.getElementById('my_wordcloud'), {
