@@ -244,12 +244,16 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
 }
 
 function checkVariablesTotal(variablesTotalChecked, varname) {
-  var indiceVariablesTotal = arrayObjectIndexOf(variablesTotalChecked, varname, "name");
-  if (indiceVariablesTotal == -1) {
-    var itemVariablesTotal = new ItemVariableTotal(varname, 1);
-    variablesTotalChecked.push(itemVariablesTotal);
+  if (varname) {
+    var indiceVariablesTotal = arrayObjectIndexOf(variablesTotalChecked, varname, "name");
+    if (indiceVariablesTotal == -1) {
+      var itemVariablesTotal = new ItemVariableTotal(varname, 1);
+      variablesTotalChecked.push(itemVariablesTotal);
+    } else {
+      variablesTotalChecked[indiceVariablesTotal].count = variablesTotalChecked[indiceVariablesTotal].count + 1;
+    }
   } else {
-    variablesTotalChecked[indiceVariablesTotal].count = variablesTotalChecked[indiceVariablesTotal].count + 1;
+    //  console.log("Error checkVariablesTotal: varname is null.");
   }
 }
 
