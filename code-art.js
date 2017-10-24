@@ -22,6 +22,7 @@ var variablesTotal = [];
 var functionList = [];
 var namesExternals = [];
 var externalsTotal = [];
+var variablesTotalChecked = [];
 estraverse.traverse(ast, {
   enter: enter,
   leave: leave
@@ -143,6 +144,11 @@ function ItemExternalTotal(name, count) {
   this.count = count;
 }
 
+function ItemVariableTotal(name, count) {
+  this.name = name;
+  this.count = count;
+}
+
 function findById(source, id) {
   for (var i = 0; i < source.length; i++) {
     if (source[i].id === id) {
@@ -236,6 +242,17 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
     }
   }
 }
+
+function checkVariablesTotal(variablesTotalChecked, varname) {
+  var indiceVariablesTotal = arrayObjectIndexOf(variablesTotalChecked, varname, "name");
+  if (indiceVariablesTotal == -1) {
+    var itemVariablesTotal = new ItemVariableTotal(varname, 1);
+    variablesTotalChecked.push(itemVariablesTotal);
+  } else {
+    variablesTotalChecked[indiceVariablesTotal].count = variablesTotalChecked[indiceVariablesTotal].count + 1;
+  }
+}
+
 
 function checkExternalTotal(externalsTotal, nameExternal) {
   var indiceExternalTotal = arrayObjectIndexOf(externalsTotal, nameExternal, "name");
@@ -392,6 +409,12 @@ function printLeave(graph) {
     } else {
       console.log("variablesTotal empty.");
     }
+    if (variablesTotalChecked.length > 0) {
+      console.log("VariablesTotalChecked: ");
+      console.log(JSON.stringify(variablesTotalChecked));
+    } else {
+      console.log("variablesTotalChecked empty.");
+    }
     if (externalsTotal.length > 0) {
       console.log("ExternalTotal: ");
       console.log(JSON.stringify(externalsTotal));
@@ -445,9 +468,11 @@ function printScope(scope, node) {
         varsDisplay);
       var nameItemFunction = node.id.name;
       addVarToItemFunction(nameItemFunction, varsDisplay, 'locals', functionList);
+      checkVariablesTotal(variablesTotalChecked, varsDisplay);
       for (i = 0; i < node.params.length; i++) {
         var varname = node.params[i].name;
         addVarToItemFunction(nameItemFunction, varname, 'locals', functionList);
+        checkVariablesTotal(variablesTotalChecked, varname);
       }
     } else {
       console.log('Variables declared in anonymous function:', varsDisplay);
