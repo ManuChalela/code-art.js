@@ -46,6 +46,7 @@ function enter(node) {
   if (node.type === 'VariableDeclarator') {
     var currentScope = scopeChain[scopeChain.length - 1];
     var name = node.id.name;
+    //console.log(name);
     var nameGlobal;
     if (!isVarDefined(name, scopeChain))
       nameGlobal = 'global';
@@ -59,11 +60,11 @@ function enter(node) {
             if (nameExternal != undefined && nameGlobal != 'global') {
               processIdentifiersCall(node);
             } else {
-              console.log("la variable es global");
+              //console.log("la variable es global");
             }
           }
         } else {
-          console.log("node.init.callee is undefined");
+          //        console.log("node.init.callee is undefined");
         }
       }
     }
@@ -100,24 +101,24 @@ function processIdentifiersCall(node) {
     //console.log(node);
     if (node.init.callee.name != undefined) {
       nameExternal = node.init.callee.name;
-      console.log(nameExternal);
+      //  console.log(nameExternal);
     } else if (node.init.name != undefined) {
       nameExternal = node.init.name;
-      console.log(nameExternal);
+      //console.log(nameExternal);
     } else {
 
     }
     namesExternals.push(nameExternal);
   } else {
-    console.log("callee.type es undefined");
+    //console.log("callee.type es undefined");
   }
-  console.log(namesExternals);
+  //console.log(namesExternals);
 }
 
 function processRequires(node) {
   if (node.init != null && node.init.type != null && node.init.type === 'CallExpression' && node.init.callee.name != undefined) {
     nameExternal = node.init.calle.name;
-    console.log(nameExternal);
+    //console.log(nameExternal);
     //namesExternals.push(nameExternal);
   }
 }
@@ -230,7 +231,7 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
           }
         });
       } else {
-        console.log(nameItemFunction + " ! " + type);
+        //  console.log(nameItemFunction + " ! " + type);
       }
     }
   }
@@ -259,7 +260,7 @@ function addExternalToFunction(nameItemFunction, namesExternals, functionList) {
         if (indiceExternal == -1) {
           itemFunction.externals.push(itemExternal);
         } else {
-          console.log("ya se encontró: " + nameExternal);
+          console.log("found it: " + nameExternal);
         }
         checkExternalTotal(externalsTotal, nameExternal);
       });
@@ -283,7 +284,7 @@ function addExternalToFunction(nameItemFunction, namesExternals, functionList) {
             functionList[indice].externals.push(itemExternal);
             checkExternalTotal(externalsTotal, nameExternal);
           } else {
-            console.log("ya se encontró: " + nameExternal);
+            console.log("found it: " + nameExternal);
           }
         });
       }
@@ -329,12 +330,12 @@ function printLeave(graph) {
   if (functionList.length > 0) {
     console.log("FunctionList: " + JSON.stringify(functionList));
   } else {
-    console.log("FunctionList vacía. No existen referencias externas en su código.");
+    console.log("FunctionList empty. There're not externals references in your code.");
   }
   if (graph) {
-    console.log("El grafo de referencias es: ");
+    console.log("Reference graph is: ");
     console.log(graph.topologicalSort());
-    console.log("El grafo serializado es: ");
+    console.log("Graph serialized: ");
     console.log(graph.serialize());
     var graphoJS = JSON.stringify(graph.serialize());
     fs.writeFile('grapho.json', graphoJS, 'utf8', function(err) {
@@ -374,7 +375,7 @@ function printLeave(graph) {
       if (err) throw err;
     });
 
-    // Agrego el externalsTotal en views/edges.json
+    // Adding externalsTotal in views/edges.json
     var edgesJS = [];
     for (var i = 0; i < externalsTotal.length; i++) {
       var itemListET = [];
@@ -385,14 +386,20 @@ function printLeave(graph) {
     fs.writeFile('views/edges.json', edgesETJS, 'utf8', function(err) {
       if (err) throw err;
     });
+    if (variablesTotal.length > 0) {
+      console.log("VariablesTotal: ");
+      console.log(JSON.stringify(variablesTotal));
+    } else {
+      console.log("variablesTotal empty.");
+    }
     if (externalsTotal.length > 0) {
       console.log("ExternalTotal: ");
       console.log(JSON.stringify(externalsTotal));
     } else {
-      console.log("externalsTotal vacío.");
+      console.log("externalsTotal empty.");
     }
   } else {
-    console.log("Grafo vacío.");
+    console.log("Graph empty.");
   }
 }
 
@@ -437,6 +444,7 @@ function printScope(scope, node) {
       console.log('Variables declared in the function ' + node.id.name + '():',
         varsDisplay);
       var nameItemFunction = node.id.name;
+      addVarToItemFunction(nameItemFunction, varsDisplay, 'locals', functionList);
       for (i = 0; i < node.params.length; i++) {
         var varname = node.params[i].name;
         addVarToItemFunction(nameItemFunction, varname, 'locals', functionList);
