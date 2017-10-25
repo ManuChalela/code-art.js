@@ -200,8 +200,17 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
             itemFunction.locals.push(itemVariable);
             functionList.push(itemFunction);
           } else { // Encontró el nombre
-            var itemVariable = new ItemVariable(nameVariable);
-            functionList[indice].locals.push(itemVariable);
+            /*
+              var itemVariable = new ItemVariable(nameVariable);
+              functionList[indice].locals.push(itemVariable);
+            */
+            var indiceItemVariable = arrayObjectIndexOf(functionList[indice].locals, nameVariable, "name");
+            if (indiceItemVariable == -1) { // No encontró el nombre del locals.
+              var itemVariable = new ItemVariable(nameVariable);
+              functionList[indice].locals.push(itemVariable);
+            } else { // Ya estaba el local guardado.
+
+            }
           }
         });
       } else if (type === 'globals') {
