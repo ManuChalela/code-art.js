@@ -18,11 +18,12 @@ var ast = esprima.parse(data, {
 var scopeChain = [];
 var assignments = [];
 var requiresModules = [];
-var variablesTotal = [];
+var variablesTotalSimple = [];
 var functionList = [];
 var namesExternals = [];
 var externalsTotal = [];
-var variablesTotalChecked = [];
+var variablesTotal = [];
+var variablesGlobal = [];
 estraverse.traverse(ast, {
   enter: enter,
   leave: leave
@@ -44,6 +45,14 @@ function enter(node) {
     scopeChain.push([]);
   }
   //console.log(node);
+  // if (node.type === 'Program') {
+  //   if (node.body.type != undefined) {
+  //     console.log(node.body.type);
+  //     if (node.body.type === 'VariableDeclarator')
+  //       console.log(node.body);
+  //   }
+  // }
+
   if (node.type === 'VariableDeclarator') {
     var currentScope = scopeChain[scopeChain.length - 1];
     var name = node.id.name;
@@ -52,7 +61,7 @@ function enter(node) {
     if (!isVarDefined(name, scopeChain))
       nameGlobal = 'global';
     currentScope.push(name);
-    variablesTotal.push(name);
+    variablesTotalSimple.push(name);
     if (node.init != undefined) {
       if (node.init.type != undefined) {
         if (node.init.type === 'CallExpression') {
@@ -252,14 +261,14 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
   }
 }
 
-function checkVariablesTotal(variablesTotalChecked, varname) {
+function checkVariablesTotal(listVariables, varname) {
   if (varname) {
-    var indiceVariablesTotal = arrayObjectIndexOf(variablesTotalChecked, varname, "name");
+    var indiceVariablesTotal = arrayObjectIndexOf(listVariables, varname, "name");
     if (indiceVariablesTotal == -1) {
       var itemVariablesTotal = new ItemVariableTotal(varname, 1);
-      variablesTotalChecked.push(itemVariablesTotal);
+      listVariables.push(itemVariablesTotal);
     } else {
-      variablesTotalChecked[indiceVariablesTotal].count = variablesTotalChecked[indiceVariablesTotal].count + 1;
+      listVariables[indiceVariablesTotal].count = listVariables[indiceVariablesTotal].count + 1;
     }
   } else {
     //  console.log("Error checkVariablesTotal: varname is null.");
@@ -329,6 +338,16 @@ function leave(node) {
     printScope(currentScope, node);
     assignments = [];
     var nameFunction;
+    // if (node.type === 'Program') {
+    //   node.body.forEach(function(itemBody) {
+    //     //console.log(itemBody);
+    //     if (itemBody.type === 'VariableDeclarator') {
+    //       console.log(itemBody.id.type);
+    //       if (itemBody.id.type === 'Identifier')
+    //         console.log(itemBody.id.type);
+    //     }
+    //   });
+    // }
     if (node.type === 'FunctionDeclaration') {
       nameFunction = node.id.name;
       addExternalToFunction(nameFunction, namesExternals, functionList);
@@ -389,6 +408,9 @@ function printLeave(graph) {
     fs.writeFile('views/list.json', itemListJS, 'utf8', function(err) {
       if (err) throw err;
     });
+
+    //var nodesRJS
+
     var linksJS = [];
     for (var i = 0; i < graph.serialize().links.length; i++) {
       var fromIndex = arrayObjectIndexOf(graph.serialize().nodes, graph.serialize().links[i].source, "id");
@@ -416,17 +438,23 @@ function printLeave(graph) {
     fs.writeFile('views/edges.json', edgesETJS, 'utf8', function(err) {
       if (err) throw err;
     });
+    if (variablesTotalSimple.length > 0) {
+      console.log("VariablesTotalSimple: ");
+      console.log(JSON.stringify(variablesTotalSimple));
+    } else {
+      console.log("variablesTotalSimple empty.");
+    }
     if (variablesTotal.length > 0) {
-      console.log("VariablesTotal: ");
+      console.log("variablesTotal: ");
       console.log(JSON.stringify(variablesTotal));
     } else {
       console.log("variablesTotal empty.");
     }
-    if (variablesTotalChecked.length > 0) {
-      console.log("VariablesTotalChecked: ");
-      console.log(JSON.stringify(variablesTotalChecked));
+    if (variablesGlobal.length > 0) {
+      console.log("VariablesGlobal: ");
+      console.log(JSON.stringify(variablesGlobal));
     } else {
-      console.log("variablesTotalChecked empty.");
+      console.log("variablesGlobal empty.");
     }
     if (externalsTotal.length > 0) {
       console.log("ExternalTotal: ");
@@ -475,17 +503,19 @@ function printScope(scope, node) {
   var varsDisplay = scope.join(', ');
   if (node.type === 'Program') {
     console.log('Variables declared in the global scope:', varsDisplay);
+    //variablesGlobal.push(varsDisplay);
+    checkVariablesTotal(variablesGlobal, varsDisplay);
   } else {
     if (node.id && node.id.name) {
       console.log('Variables declared in the function ' + node.id.name + '():',
         varsDisplay);
       var nameItemFunction = node.id.name;
       addVarToItemFunction(nameItemFunction, varsDisplay, 'locals', functionList);
-      checkVariablesTotal(variablesTotalChecked, varsDisplay);
+      checkVariablesTotal(variablesTotal, varsDisplay);
       for (i = 0; i < node.params.length; i++) {
         var varname = node.params[i].name;
         addVarToItemFunction(nameItemFunction, varname, 'locals', functionList);
-        checkVariablesTotal(variablesTotalChecked, varname);
+        checkVariablesTotal(variablesTotal, varname);
       }
     } else {
       console.log('Variables declared in anonymous function:', varsDisplay);
@@ -493,14 +523,14 @@ function printScope(scope, node) {
   }
 }
 
-function processVariablesTotal(variablesTotal) {
+function processVariablesTotalSimple(variablesTotalSimple) {
   var count = {};
-  variablesTotal.forEach(function(i) {
+  variablesTotalSimple.forEach(function(i) {
     count[i] = (count[i] || 0) + 1;
   });
   //console.log(count);
 }
-processVariablesTotal(variablesTotal);
+processVariablesTotalSimple(variablesTotalSimple);
 printLeave(grapho);
 
 function arrayObjectIndexOf(myArray, searchTerm, property) {

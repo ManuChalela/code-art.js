@@ -44,7 +44,8 @@ app.get("/getGraph", (req, res) => {
 
 app.get("/getWordCloud", (req, res) => {
   console.log("Getting WordCloud info ");
-  var list = jsonfile.readFileSync('views/edges.json');
+  //var list = jsonfile.readFileSync('views/edges.json');
+  var list = jsonfile.readFileSync('views/list.json');
   res.send(list);
 });
 
