@@ -1,1 +1,1 @@
-[{"name":"sumar","locals":[{"name":"c"},{"name":"a"},{"name":"b"}],"globals":[],"externals":[{"name":"Math.abs"}]}]
+[{"name":"printHola","locals":[{"name":"si"}],"globals":[],"externals":[]}]

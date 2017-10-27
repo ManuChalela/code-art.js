@@ -21,6 +21,7 @@ var requiresModules = [];
 var variablesTotalSimple = [];
 var functionList = [];
 var namesExternals = [];
+var namesGlobals = [];
 var externalsTotal = [];
 var variablesTotal = [];
 var variablesGlobal = [];
@@ -44,24 +45,23 @@ function enter(node) {
   if (createsNewScope(node)) {
     scopeChain.push([]);
   }
-  //console.log(node);
-  // if (node.type === 'Program') {
-  //   if (node.body.type != undefined) {
-  //     console.log(node.body.type);
-  //     if (node.body.type === 'VariableDeclarator')
-  //       console.log(node.body);
-  //   }
-  // }
-
+  if (node.type === 'FunctionDeclaration') {
+    //console.log(node);
+  }
   if (node.type === 'VariableDeclarator') {
     var currentScope = scopeChain[scopeChain.length - 1];
     var name = node.id.name;
-    //console.log(name);
+    //  console.log(name);
     var nameGlobal;
-    if (!isVarDefined(name, scopeChain))
+    if (isVarDefined(name, scopeChain)) {
       nameGlobal = 'global';
+      console.log("variable global detectada.");
+      namesGlobals.push(name);
+      console.log(JSON.stringify(namesGlobals));
+    }
     currentScope.push(name);
     variablesTotalSimple.push(name);
+    //console.log(node.init);
     if (node.init != undefined) {
       if (node.init.type != undefined) {
         if (node.init.type === 'CallExpression') {
@@ -73,8 +73,19 @@ function enter(node) {
               //console.log("la variable es global");
             }
           }
-        } else {
-          //        console.log("node.init.callee is undefined");
+        } else if (node.init.type === 'BinaryExpression') {
+          if (node.init.left.type === 'Identifier') {
+            if (isVarDefined(node.init.left.name, scopeChain)) {
+              console.log("hay una variable global left");
+              processIdentifiersGlobal(node.init.left.name);
+              console.log(namesGlobals);
+            }
+          } else if (node.init.right.type === 'BinaryExpression') {
+            if (isVarDefined(node.init.right.name, scopeChain)) {
+              console.log("hay una variable global right");
+              processIdentifiersGlobal(node.init.right.name);
+            }
+          }
         }
       }
     }
@@ -125,6 +136,10 @@ function processIdentifiersCall(node) {
   //console.log(namesExternals);
 }
 
+function processIdentifiersGlobal(name) {
+  namesGlobals.push(name);
+}
+
 function processRequires(node) {
   if (node.init != null && node.init.type != null && node.init.type === 'CallExpression' && node.init.callee.name != undefined) {
     nameExternal = node.init.calle.name;
@@ -171,92 +186,74 @@ function findById(source, id) {
 function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList) {
   if (nameItemFunction != null && nameVariable != null && type != null) {
     if (functionList.length === 0) {
+      var itemVariable = new ItemVariable(nameVariable);
+      var locals = [];
+      var globals = [];
+      var externals = [];
+      var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
       if (type === 'locals') {
-        var itemVariable = new ItemVariable(nameVariable);
-        var locals = [];
-        var globals = [];
-        var externals = [];
-        var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
         itemFunction.locals.push(itemVariable);
-        functionList.push(itemFunction);
       } else if (type === 'globals') {
-        var itemVariable = new ItemVariable(nameVariable);
-        var locals = [];
-        var globals = [];
-        var externals = [];
-        var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
         itemFunction.globals.push(itemVariable);
-        functionList.push(itemFunction);
+        namesGlobals.forEach(function(item) {
+          var itemG = new ItemVariable(item);
+          itemFunction.globals.push(itemG);
+        });
       } else if (type === 'externals') {
-        var itemVariable = new ItemVariable(nameVariable);
-        var locals = [];
-        var globals = [];
-        var externals = [];
-        var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
         itemFunction.externals.push(itemVariable);
-        functionList.push(itemFunction);
-      }
-    } else {
-      if (type === 'locals') {
-        functionList.forEach(function(element) {
-          var indice = arrayObjectIndexOf(functionList, nameItemFunction, "name");
-          if (indice == -1) { // No encontró el nombre de la función
-            var itemVariable = new ItemVariable(nameVariable);
-            var locals = [];
-            var globals = [];
-            var externals = [];
-            var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
-            itemFunction.locals.push(itemVariable);
-            functionList.push(itemFunction);
-          } else { // Encontró el nombre
-            /*
-              var itemVariable = new ItemVariable(nameVariable);
-              functionList[indice].locals.push(itemVariable);
-            */
-            var indiceItemVariable = arrayObjectIndexOf(functionList[indice].locals, nameVariable, "name");
-            if (indiceItemVariable == -1) { // No encontró el nombre del locals.
-              var itemVariable = new ItemVariable(nameVariable);
-              functionList[indice].locals.push(itemVariable);
-            } else { // Ya estaba el local guardado.
-
-            }
-          }
-        });
-      } else if (type === 'globals') {
-        functionList.forEach(function(element) {
-          var indice = arrayObjectIndexOf(functionList, nameItemFunction, "name");
-          if (indice == -1) { // No encontró el nombre
-            var itemVariable = new ItemVariable(nameVariable);
-            var locals = [];
-            var globals = [];
-            var externals = [];
-            var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
-            itemFunction.globals.push(itemVariable);
-            functionList.push(itemFunction);
-          } else { // Encontró el nombre
-            var itemVariable = new ItemVariable(nameVariable);
-            functionList[indice].globals.push(itemVariable);
-          }
-        });
-      } else if (type === 'externals') {
-        functionList.forEach(function(element) {
-          var indice = arrayObjectIndexOf(functionList, nameItemFunction, "name");
-          if (indice == -1) { // No encontró el nombre
-            var itemVariable = new ItemVariable(nameVariable);
-            var locals = [];
-            var globals = [];
-            var externals = [];
-            var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
-            itemFunction.externals.push(itemVariable);
-            functionList.push(itemFunction);
-          } else { // Encontró el nombre
-            var itemVariable = new ItemVariable(nameVariable);
-            functionList[indice].externals.push(itemVariable);
-          }
-        });
       } else {
-        //  console.log(nameItemFunction + " ! " + type);
+        console.log("Error de tipo en addVarToItemFunction.");
       }
+      functionList.push(itemFunction);
+    } else { // functionList not empty
+      functionList.forEach(function(element) {
+        var indice = arrayObjectIndexOf(functionList, nameItemFunction, "name");
+        if (indice == -1) { // No encontró el nombre de la función
+          var itemVariable = new ItemVariable(nameVariable);
+          var locals = [];
+          var globals = [];
+          var externals = [];
+          var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
+          if (type === 'locals') {
+            itemFunction.locals.push(itemVariable);
+          } else if (type === 'globals') {
+            itemFunction.globals.push(itemVariable);
+            namesGlobals.forEach(function(item) {
+              var itemG = new ItemVariable(item);
+              itemFunction.globals.push(itemG);
+            });
+          } else if (type === 'externals') {
+            itemFunction.externals.push(itemVariable);
+          } else {
+            console.log("Error en el tipo de addVarToItemFunction no nulo.");
+          }
+          functionList.push(itemFunction);
+        } else { // Encontró el nombre de la función
+          var itemVariable = new ItemVariable(nameVariable);
+          if (type === 'locals') {
+            var indiceItemLocal = arrayObjectIndexOf(functionList[indice].locals, nameVariable, "name");
+            if (indiceItemLocal == -1) { // No encontró el nombre del locals.
+              functionList[indice].locals.push(itemVariable);
+            }
+          } else if (type === 'globals') {
+            var indiceItemGlobal = arrayObjectIndexOf(functionList[indice].globals, nameVariable, "name");
+            if (indiceItemGlobal == -1) { // No encontró el nombre del global
+              functionList[indice].globals.push(itemVariable);
+              namesGlobals.forEach(function(item) {
+                var itemG = new ItemVariable(item);
+                functionList[indice].globals.push(itemG);
+              });
+            }
+          } else if (type === 'externals') {
+            var indiceItemExternal = arrayObjectIndexOf(functionList[indice].externals, nameVariable, "name");
+            if (indiceItemExternal == -1) {
+              functionList[indice].externals.push(itemVariable);
+            }
+          } else {
+            console.log("Error en el tipo de addVarToItemFunction no nulo.");
+          }
+        }
+      });
     }
   }
 }
@@ -352,6 +349,8 @@ function leave(node) {
       nameFunction = node.id.name;
       addExternalToFunction(nameFunction, namesExternals, functionList);
       namesExternals = []
+      namesGlobals = []
+      //console.log(node);
     }
     if (functionList.length != 0) {
       var Graph = require("graph-data-structure");
@@ -479,6 +478,7 @@ function isVarDefined(varname, scopeChain) {
 
 function checkForLeaks(assignments, scopeChain, functionList) {
   for (var i = 0; i < assignments.length; i++) {
+    console.log(assignment);
     var assignment = assignments[i];
     var varname = assignment.left.name;
     if (!isVarDefined(varname, scopeChain)) {
@@ -503,26 +503,63 @@ function printScope(scope, node) {
   var varsDisplay = scope.join(', ');
   if (node.type === 'Program') {
     console.log('Variables declared in the global scope:', varsDisplay);
-    //variablesGlobal.push(varsDisplay);
-    checkVariablesTotal(variablesGlobal, varsDisplay);
+    scope.forEach(function(item) {
+      checkVariablesTotal(variablesGlobal, item);
+    });
+  } else {
+    if (node.id && node.id.name) {
+      console.log('Variables declared in the function ' + node.id.name + '():',
+        varsDisplay);
+      var nameItemFunction = node.id.name;
+      scope.forEach(function(item) {
+        var indiceGlobal = arrayObjectIndexOf(variablesGlobal, item, "name");
+        if (indiceGlobal == -1) { // Si no encontró son locales.
+          // scope.forEach(function(item) {
+          //   addVarToItemFunction(nameItemFunction, item, 'locals', functionList);
+          //   checkVariablesTotal(variablesTotal, item);
+          // });
+          addVarToItemFunction(nameItemFunction, item, 'locals', functionList);
+          checkVariablesTotal(variablesTotal, item);
+          for (i = 0; i < node.params.length; i++) {
+            var varname = node.params[i].name;
+            addVarToItemFunction(nameItemFunction, varname, 'locals', functionList);
+            checkVariablesTotal(variablesTotal, varname);
+          }
+        } else { // Si encontró son globales
+          console.log("porque cantann !!!! ");
+          addVarToItemFunction(nameItemFunction, item, 'globals', functionList);
+          checkVariablesTotal(variablesGlobal, item);
+        }
+
+      });
+    } else {
+      console.log('Variables declared in anonymous function:', varsDisplay);
+    }
+  }
+}
+/*
+function printScope(scope, node) {
+  var varsDisplay = scope.join(', ');
+  if (node.type === 'Program') {
+    console.log('Variables declared in the global scope:', varsDisplay);
   } else {
     if (node.id && node.id.name) {
       console.log('Variables declared in the function ' + node.id.name + '():',
         varsDisplay);
       var nameItemFunction = node.id.name;
       addVarToItemFunction(nameItemFunction, varsDisplay, 'locals', functionList);
-      checkVariablesTotal(variablesTotal, varsDisplay);
+      checkVariablesTotal(variablesTotalChecked, varsDisplay);
       for (i = 0; i < node.params.length; i++) {
         var varname = node.params[i].name;
         addVarToItemFunction(nameItemFunction, varname, 'locals', functionList);
-        checkVariablesTotal(variablesTotal, varname);
+        checkVariablesTotal(variablesTotalChecked, varname);
       }
     } else {
       console.log('Variables declared in anonymous function:', varsDisplay);
     }
   }
 }
-
+*/
 function processVariablesTotalSimple(variablesTotalSimple) {
   var count = {};
   variablesTotalSimple.forEach(function(i) {
