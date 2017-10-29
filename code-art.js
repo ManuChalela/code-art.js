@@ -25,6 +25,7 @@ var namesGlobals = [];
 var externalsTotal = [];
 var variablesTotal = [];
 var variablesGlobal = [];
+var size = 0;
 estraverse.traverse(ast, {
   enter: enter,
   leave: leave
@@ -47,6 +48,8 @@ function enter(node) {
   }
   if (node.type === 'FunctionDeclaration') {
     //console.log(node);
+    size = node.body.body.length;
+    console.log("size: " + size);
   }
   if (node.type === 'VariableDeclarator') {
     var currentScope = scopeChain[scopeChain.length - 1];
@@ -148,11 +151,12 @@ function processRequires(node) {
   }
 }
 
-function ItemFunction(name, locals, globals, externals) {
+function ItemFunction(name, locals, globals, externals, size) {
   this.name = name;
   this.locals = locals;
   this.globals = globals;
   this.externals = externals;
+  this.size = size;
 }
 
 function ItemVariable(name) {
@@ -190,7 +194,7 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
       var locals = [];
       var globals = [];
       var externals = [];
-      var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
+      var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals, size);
       if (type === 'locals') {
         itemFunction.locals.push(itemVariable);
       } else if (type === 'globals') {
@@ -213,7 +217,7 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
           var locals = [];
           var globals = [];
           var externals = [];
-          var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
+          var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals, size);
           if (type === 'locals') {
             itemFunction.locals.push(itemVariable);
           } else if (type === 'globals') {
@@ -289,7 +293,7 @@ function addExternalToFunction(nameItemFunction, namesExternals, functionList) {
   var externals = [];
   if (nameItemFunction != undefined && namesExternals.length != 0) {
     if (functionList.length === 0) {
-      var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
+      var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals, size);
       namesExternals.forEach(function(nameExternal) {
         var itemExternal = new ItemExternal(nameExternal);
         var indiceExternal = arrayObjectIndexOf(namesExternals, nameExternal, "name");
@@ -306,7 +310,7 @@ function addExternalToFunction(nameItemFunction, namesExternals, functionList) {
       if (indice == -1) { // No encontró el nombre de la function
         namesExternals.forEach(function(nameExternal) {
           var itemExternal = new ItemExternal(nameExternal);
-          var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals);
+          var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals, size);
           itemFunction.externals.push(itemExternal);
           checkExternalTotal(externalsTotal, nameExternal);
           functionList.push(itemFunction);

@@ -1,1 +1,1 @@
-{"nodes":[{"id":"printHola"}],"links":[]}
+{"nodes":[{"id":"Absoluto"},{"id":"Math.abs"},{"id":"Random"},{"id":"Math.Random"},{"id":"Max"},{"id":"Random2"},{"id":"Mult"}],"links":[{"source":"Absoluto","target":"Math.abs"},{"source":"Random","target":"Math.Random"},{"source":"Random2","target":"Absoluto"},{"source":"Mult","target":"Absoluto"}]}
