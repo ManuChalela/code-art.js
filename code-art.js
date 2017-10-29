@@ -50,6 +50,8 @@ function enter(node) {
     //console.log(node);
     size = node.body.body.length;
     //  console.log("size: " + size);
+    var nameFunction = node.id.name;
+
   }
   if (node.type === 'VariableDeclarator') {
     var currentScope = scopeChain[scopeChain.length - 1];
@@ -64,7 +66,7 @@ function enter(node) {
     }
     currentScope.push(name);
     variablesTotalSimple.push(name);
-    //console.log(node.init);
+    console.log(node.init);
     if (node.init != undefined) {
       if (node.init.type != undefined) {
         if (node.init.type === 'CallExpression') {
@@ -76,29 +78,8 @@ function enter(node) {
               //console.log("la variable es global");
             }
           }
-        } else if (node.init.type === 'BinaryExpression') {
-          if (node.init.left.type === 'Identifier') {
-            if (isVarDefined(node.init.left.name, scopeChain)) {
-              console.log("hay una variable global left");
-              processIdentifiersGlobal(node.init.left.name);
-              console.log(namesGlobals);
-            } else if (isVarDefined(node.init.right.name, scopeChain)) {
-              console.log("hay una variable global right");
-              processIdentifiersGlobal(node.init.right.name);
-            }
-          } else if (node.init.right.type === 'BinaryExpression') {
-            if (isVarDefined(node.init.left.name, scopeChain)) {
-              console.log("hay una variable global left");
-              processIdentifiersGlobal(node.init.left.name);
-              console.log(namesGlobals);
-              addVarToItemFunction(name, node.init.left.name, 'globals', functionList);
-            } else if (isVarDefined(node.init.right.name, scopeChain)) {
-              console.log("hay una variable global right");
-              processIdentifiersGlobal(node.init.right.name);
-              addVarToItemFunction(name, node.init.right.name, 'globals', functionList);
-            }
-          }
         }
+        checkGlobal(node, nameFunction);
       }
     }
   }
@@ -127,6 +108,57 @@ function enter(node) {
       checkExternalTotal(externalsTotal, nameExternal);
     }
   }
+}
+
+function checkGlobal(node, name) {
+  if (node.init.type === 'BinaryExpression') {
+    if (node.init.left.type === 'Identifier') {
+      if (isVarDefined(node.init.left.name, scopeChain)) {
+        console.log("hay una variable global left");
+        processIdentifiersGlobal(node.init.left.name);
+        console.log(namesGlobals);
+        addVarToItemFunction(name, node.init.left.name, 'globals', functionList);
+      } else if (isVarDefined(node.init.right.name, scopeChain)) {
+        console.log("hay una variable global right");
+        processIdentifiersGlobal(node.init.right.name);
+        addVarToItemFunction(name, node.init.right.name, 'globals', functionList);
+      }
+    } else if (node.init.right.type === 'Identifier') {
+      if (isVarDefined(node.init.left.name, scopeChain)) {
+        console.log("hay una variable global left");
+        processIdentifiersGlobal(node.init.left.name);
+        console.log(namesGlobals);
+        addVarToItemFunction(name, node.init.left.name, 'globals', functionList);
+      } else if (isVarDefined(node.init.right.name, scopeChain)) {
+        console.log("hay una variable global right");
+        processIdentifiersGlobal(node.init.right.name);
+        addVarToItemFunction(name, node.init.right.name, 'globals', functionList);
+      }
+    }
+  }
+  // if (node.init.type === 'BinaryExpression') {
+  //   if (node.init.left.type === 'Identifier') {
+  //     if (isVarDefined(node.init.left.name, scopeChain)) {
+  //       console.log("hay una variable global left");
+  //       processIdentifiersGlobal(node.init.left.name);
+  //       console.log(namesGlobals);
+  //     } else if (isVarDefined(node.init.right.name, scopeChain)) {
+  //       console.log("hay una variable global right");
+  //       processIdentifiersGlobal(node.init.right.name);
+  //     }
+  //   } else if (node.init.right.type === 'BinaryExpression') {
+  //     if (isVarDefined(node.init.left.name, scopeChain)) {
+  //       console.log("hay una variable global left");
+  //       processIdentifiersGlobal(node.init.left.name);
+  //       console.log(namesGlobals);
+  //       addVarToItemFunction(name, node.init.left.name, 'globals', functionList);
+  //     } else if (isVarDefined(node.init.right.name, scopeChain)) {
+  //       console.log("hay una variable global right");
+  //       processIdentifiersGlobal(node.init.right.name);
+  //       addVarToItemFunction(name, node.init.right.name, 'globals', functionList);
+  //     }
+  //   }
+  // }
 }
 
 function processIdentifiersCall(node) {
@@ -208,10 +240,10 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
         itemFunction.locals.push(itemVariable);
       } else if (type === 'globals') {
         itemFunction.globals.push(itemVariable);
-        namesGlobals.forEach(function(item) {
-          var itemG = new ItemVariable(item);
-          itemFunction.globals.push(itemG);
-        });
+        // namesGlobals.forEach(function(item) {
+        //   var itemG = new ItemVariable(item);
+        //   itemFunction.globals.push(itemG);
+        // });
       } else if (type === 'externals') {
         itemFunction.externals.push(itemVariable);
       } else {
@@ -231,10 +263,10 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
             itemFunction.locals.push(itemVariable);
           } else if (type === 'globals') {
             itemFunction.globals.push(itemVariable);
-            namesGlobals.forEach(function(item) {
-              var itemG = new ItemVariable(item);
-              itemFunction.globals.push(itemG);
-            });
+            // namesGlobals.forEach(function(item) {
+            //   var itemG = new ItemVariable(item);
+            //   itemFunction.globals.push(itemG);
+            // });
           } else if (type === 'externals') {
             itemFunction.externals.push(itemVariable);
           } else {
@@ -361,8 +393,12 @@ function leave(node) {
     if (node.type === 'FunctionDeclaration') {
       nameFunction = node.id.name;
       addExternalToFunction(nameFunction, namesExternals, functionList);
-      namesExternals = []
-      namesGlobals = []
+      namesExternals = [];
+      console.log("namesGlobals leave: " + JSON.stringify(namesGlobals));
+      namesGlobals.forEach(function(itemGlobal) {
+        addVarToItemFunction(nameFunction, itemGlobal, 'globals', functionList);
+      });
+      namesGlobals = [];
       //console.log(node);
     }
     if (functionList.length != 0) {
