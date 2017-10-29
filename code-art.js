@@ -49,7 +49,7 @@ function enter(node) {
   if (node.type === 'FunctionDeclaration') {
     //console.log(node);
     size = node.body.body.length;
-    console.log("size: " + size);
+    //  console.log("size: " + size);
   }
   if (node.type === 'VariableDeclarator') {
     var currentScope = scopeChain[scopeChain.length - 1];
@@ -82,11 +82,20 @@ function enter(node) {
               console.log("hay una variable global left");
               processIdentifiersGlobal(node.init.left.name);
               console.log(namesGlobals);
-            }
-          } else if (node.init.right.type === 'BinaryExpression') {
-            if (isVarDefined(node.init.right.name, scopeChain)) {
+            } else if (isVarDefined(node.init.right.name, scopeChain)) {
               console.log("hay una variable global right");
               processIdentifiersGlobal(node.init.right.name);
+            }
+          } else if (node.init.right.type === 'BinaryExpression') {
+            if (isVarDefined(node.init.left.name, scopeChain)) {
+              console.log("hay una variable global left");
+              processIdentifiersGlobal(node.init.left.name);
+              console.log(namesGlobals);
+              addVarToItemFunction(name, node.init.left.name, 'globals', functionList);
+            } else if (isVarDefined(node.init.right.name, scopeChain)) {
+              console.log("hay una variable global right");
+              processIdentifiersGlobal(node.init.right.name);
+              addVarToItemFunction(name, node.init.right.name, 'globals', functionList);
             }
           }
         }
@@ -412,7 +421,6 @@ function printLeave(graph) {
       if (err) throw err;
     });
 
-    //var nodesRJS
 
     var linksJS = [];
     for (var i = 0; i < graph.serialize().links.length; i++) {
@@ -432,13 +440,27 @@ function printLeave(graph) {
 
     // Adding externalsTotal in views/edges.json
     var edgesJS = [];
+    var edgesLogJS = [];
     for (var i = 0; i < externalsTotal.length; i++) {
       var itemListET = [];
       itemListET.push(externalsTotal[i].name, externalsTotal[i].count);
       edgesJS.push(JSON.stringify(itemListET));
+
+      var itemListLog = [];
+      if (externalsTotal[i].count == 1) {
+        itemListLog.push(externalsTotal[i].name, externalsTotal[i].count);
+      } else {
+        itemListLog.push(externalsTotal[i].name, Math.log(externalsTotal[i].count));
+      }
+      edgesLogJS.push(JSON.stringify(itemListLog));
     }
     var edgesETJS = "[" + edgesJS + "]";
     fs.writeFile('views/edges.json', edgesETJS, 'utf8', function(err) {
+      if (err) throw err;
+    });
+
+    var edgesETLogs = "[" + edgesLogJS + "]";
+    fs.writeFile('views/edgesLog.json', edgesETLogs, 'utf8', function(err) {
       if (err) throw err;
     });
     if (variablesTotalSimple.length > 0) {
