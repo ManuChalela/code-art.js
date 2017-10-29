@@ -51,7 +51,6 @@ function enter(node) {
     size = node.body.body.length;
     //  console.log("size: " + size);
     var nameFunction = node.id.name;
-
   }
   if (node.type === 'VariableDeclarator') {
     var currentScope = scopeChain[scopeChain.length - 1];
@@ -66,7 +65,7 @@ function enter(node) {
     }
     currentScope.push(name);
     variablesTotalSimple.push(name);
-    console.log(node.init);
+    //console.log(node.init);
     if (node.init != undefined) {
       if (node.init.type != undefined) {
         if (node.init.type === 'CallExpression') {
@@ -79,12 +78,20 @@ function enter(node) {
             }
           }
         }
-        checkGlobal(node, nameFunction);
+        checkGlobal(node, nameFunction, 'AssignmentExpression');
       }
     }
   }
   if (node.type === 'AssignmentExpression') {
     assignments.push(node);
+    //console.log(node);
+    //checkGlobal(node, nameFunction);
+  }
+  if (node.type === 'ExpressionStatement') {
+    if (node.expression.type === 'AssignmentExpression') {
+      //console.log(node);
+      checkGlobal(node, node.id, 'ExpressionStatement');
+    }
   }
   if (node.type === 'CallExpression') {
     var currentScope = scopeChain[scopeChain.length - 1];
@@ -110,29 +117,41 @@ function enter(node) {
   }
 }
 
-function checkGlobal(node, name) {
-  if (node.init.type === 'BinaryExpression') {
-    if (node.init.left.type === 'Identifier') {
-      if (isVarDefined(node.init.left.name, scopeChain)) {
-        console.log("hay una variable global left");
-        processIdentifiersGlobal(node.init.left.name);
-        console.log(namesGlobals);
-        addVarToItemFunction(name, node.init.left.name, 'globals', functionList);
-      } else if (isVarDefined(node.init.right.name, scopeChain)) {
-        console.log("hay una variable global right");
-        processIdentifiersGlobal(node.init.right.name);
-        addVarToItemFunction(name, node.init.right.name, 'globals', functionList);
+function checkGlobal(node, name, type) {
+  if (type === 'AssignmentExpression') {
+    if (node.init.type === 'BinaryExpression') {
+      if (node.init.left.type === 'Identifier') {
+        if (isVarDefined(node.init.left.name, scopeChain)) {
+          console.log("hay una variable global left");
+          processIdentifiersGlobal(node.init.left.name);
+          console.log(namesGlobals);
+          addVarToItemFunction(name, node.init.left.name, 'globals', functionList);
+        } else if (isVarDefined(node.init.right.name, scopeChain)) {
+          console.log("hay una variable global right");
+          processIdentifiersGlobal(node.init.right.name);
+          addVarToItemFunction(name, node.init.right.name, 'globals', functionList);
+        }
+      } else if (node.init.right.type === 'Identifier') {
+        if (isVarDefined(node.init.left.name, scopeChain)) {
+          console.log("hay una variable global left");
+          processIdentifiersGlobal(node.init.left.name);
+          console.log(namesGlobals);
+          addVarToItemFunction(name, node.init.left.name, 'globals', functionList);
+        } else if (isVarDefined(node.init.right.name, scopeChain)) {
+          console.log("hay una variable global right");
+          processIdentifiersGlobal(node.init.right.name);
+          addVarToItemFunction(name, node.init.right.name, 'globals', functionList);
+        }
       }
-    } else if (node.init.right.type === 'Identifier') {
-      if (isVarDefined(node.init.left.name, scopeChain)) {
-        console.log("hay una variable global left");
-        processIdentifiersGlobal(node.init.left.name);
-        console.log(namesGlobals);
-        addVarToItemFunction(name, node.init.left.name, 'globals', functionList);
-      } else if (isVarDefined(node.init.right.name, scopeChain)) {
-        console.log("hay una variable global right");
-        processIdentifiersGlobal(node.init.right.name);
-        addVarToItemFunction(name, node.init.right.name, 'globals', functionList);
+    }
+  } else if (type === 'ExpressionStatement') {
+    if (node.expression.type === 'AssignmentExpression') {
+      if (node.expression.left.type === 'Identifier') {
+        if (isVarDefined(node.expression.left.name, scopeChain)) {
+          console.log("hay una variable global left en ExpressionStatement");
+          processIdentifiersGlobal(node.expression.left.name);
+          addVarToItemFunction(name, node.expression.left.name, 'globals', functionList);
+        }
       }
     }
   }
@@ -400,6 +419,17 @@ function leave(node) {
       });
       namesGlobals = [];
       //console.log(node);
+    }
+    //console.log(node.id);
+    if (node.type === 'ExpressionStatement') {
+      if (node.expression.type === 'AssignmentExpression') {
+        //console.log(node);
+        checkGlobal(node, node.id, 'ExpressionStatement');
+      }
+    }
+    if (node.type === 'AssignmentExpression') {
+      //console.log(node);
+      checkGlobal(node, node.id, 'AssignmentExpression');
     }
     if (functionList.length != 0) {
       var Graph = require("graph-data-structure");
