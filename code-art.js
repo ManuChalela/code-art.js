@@ -59,9 +59,9 @@ function enter(node) {
     var nameGlobal;
     if (isVarDefined(name, scopeChain)) {
       nameGlobal = 'global';
-      console.log("variable global detectada.");
+      //console.log("variable global detectada.");
       namesGlobals.push(name);
-      console.log(JSON.stringify(namesGlobals));
+      //console.log(JSON.stringify(namesGlobals));
     }
     currentScope.push(name);
     variablesTotalSimple.push(name);
@@ -78,7 +78,8 @@ function enter(node) {
             }
           }
         }
-        checkGlobal(node, nameFunction, 'AssignmentExpression');
+        // lo comento para no tener 3 globall en globals de Absoluto con abs.js
+        //checkGlobal(node, nameFunction, 'AssignmentExpression');
       }
     }
   }
@@ -122,23 +123,23 @@ function checkGlobal(node, name, type) {
     if (node.init.type === 'BinaryExpression') {
       if (node.init.left.type === 'Identifier') {
         if (isVarDefined(node.init.left.name, scopeChain)) {
-          console.log("hay una variable global left");
+          //console.log("hay una variable global left");
           processIdentifiersGlobal(node.init.left.name);
-          console.log(namesGlobals);
+          //console.log(namesGlobals);
           addVarToItemFunction(name, node.init.left.name, 'globals', functionList);
         } else if (isVarDefined(node.init.right.name, scopeChain)) {
-          console.log("hay una variable global right");
+          //console.log("hay una variable global right");
           processIdentifiersGlobal(node.init.right.name);
           addVarToItemFunction(name, node.init.right.name, 'globals', functionList);
         }
       } else if (node.init.right.type === 'Identifier') {
         if (isVarDefined(node.init.left.name, scopeChain)) {
-          console.log("hay una variable global left");
+          //console.log("hay una variable global left");
           processIdentifiersGlobal(node.init.left.name);
-          console.log(namesGlobals);
+          //console.log(namesGlobals);
           addVarToItemFunction(name, node.init.left.name, 'globals', functionList);
         } else if (isVarDefined(node.init.right.name, scopeChain)) {
-          console.log("hay una variable global right");
+          //console.log("hay una variable global right");
           processIdentifiersGlobal(node.init.right.name);
           addVarToItemFunction(name, node.init.right.name, 'globals', functionList);
         }
@@ -148,7 +149,7 @@ function checkGlobal(node, name, type) {
     if (node.expression.type === 'AssignmentExpression') {
       if (node.expression.left.type === 'Identifier') {
         if (isVarDefined(node.expression.left.name, scopeChain)) {
-          console.log("hay una variable global left en ExpressionStatement");
+          //  console.log("hay una variable global left en ExpressionStatement");
           processIdentifiersGlobal(node.expression.left.name);
           addVarToItemFunction(name, node.expression.left.name, 'globals', functionList);
         }
@@ -413,7 +414,7 @@ function leave(node) {
       nameFunction = node.id.name;
       addExternalToFunction(nameFunction, namesExternals, functionList);
       namesExternals = [];
-      console.log("namesGlobals leave: " + JSON.stringify(namesGlobals));
+      //console.log("namesGlobals leave: " + JSON.stringify(namesGlobals));
       namesGlobals.forEach(function(itemGlobal) {
         addVarToItemFunction(nameFunction, itemGlobal, 'globals', functionList);
       });
