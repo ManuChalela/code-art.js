@@ -1,1 +1,1 @@
-[{"name":"Absoluto","locals":[{"name":"abso"},{"name":"x"}],"globals":[{"name":"globall"},{"name":"globall"}],"externals":[{"name":"Math.abs"}],"size":3}]
+[{"name":"Absoluto","locals":[{"name":"abso"}],"globals":[{"name":"globall"},{"name":"globall"}],"externals":[{"name":"Math.abs"}],"size":3}]

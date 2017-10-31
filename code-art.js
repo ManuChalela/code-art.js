@@ -641,7 +641,8 @@ function printScope(scope, node) {
           checkVariablesTotal(variablesTotal, item);
           for (i = 0; i < node.params.length; i++) {
             var varname = node.params[i].name;
-            addVarToItemFunction(nameItemFunction, varname, 'locals', functionList);
+            // TODO: Revisar esto para no agregar como locales los parámetros.
+            //addVarToItemFunction(nameItemFunction, varname, 'locals', functionList);
             checkVariablesTotal(variablesTotal, varname);
           }
         } else { // Si encontró son globales
