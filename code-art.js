@@ -474,11 +474,37 @@ function printLeave(graph) {
     for (var i = 0; i < graph.serialize().nodes.length; i++) {
       var itemN = new itemNode(i, graph.serialize().nodes[i].id, 0);
       nodesJS.push(JSON.stringify(itemN));
-
+      /*
       var itemList = [];
       itemList.push(graph.serialize().nodes[i].id, 1);
       itemListJS.push(JSON.stringify(itemList));
+      */
     }
+    for (var i = 0; i < functionList.length; i++) {
+      var itemList = [];
+      if (functionList[i].size === 1)
+        itemList.push(functionList[i].name, functionList[i].size);
+      else
+        itemList.push(functionList[i].name, Math.log(functionList[i].size));
+      itemListJS.push(JSON.stringify(itemList));
+
+      // Agrego las globales de cada function a variablesGlobal
+      if (functionList[i].globals) {
+        functionList[i].globals.forEach(function(varGlobal) {
+          checkVariablesTotal(variablesGlobal, varGlobal.name);
+        });
+      }
+    }
+    // Agrego los globals a la WordCloud
+    variablesGlobal.forEach(function(varGlobal) {
+      var itemList = [];
+      if (varGlobal.count === 1)
+        itemList.push(varGlobal.name, varGlobal.count);
+      else
+        itemList.push(varGlobal.name, Math.log(varGlobal.count));
+      itemListJS.push(JSON.stringify(itemList));
+    });
+
     nodesJS = "[" + nodesJS + "]";
     fs.writeFile('nodes.json', nodesJS, 'utf8', function(err) {
       if (err) throw err;
