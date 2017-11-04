@@ -43,12 +43,14 @@ function itemNode(id, label, group) {
 }
 
 function enter(node) {
+  //  size = size + 1;
   if (createsNewScope(node)) {
     scopeChain.push([]);
   }
   if (node.type === 'FunctionDeclaration') {
     //console.log(node);
     size = node.body.body.length;
+    //size = size + 1;
     //  console.log("size: " + size);
     var nameFunction = node.id.name;
   }
@@ -483,9 +485,10 @@ function printLeave(graph) {
     for (var i = 0; i < functionList.length; i++) {
       var itemList = [];
       if (functionList[i].size === 1)
-        itemList.push(functionList[i].name, functionList[i].size);
+        //  itemList.push(functionList[i].name, functionList[i].size);
+        itemList.push(functionList[i].name, 0.1, "#15a4fa");
       else
-        itemList.push(functionList[i].name, Math.log(functionList[i].size));
+        itemList.push(functionList[i].name, Math.log(functionList[i].size), "#15a4fa");
       itemListJS.push(JSON.stringify(itemList));
 
       // Agrego las globales de cada function a variablesGlobal
@@ -499,9 +502,10 @@ function printLeave(graph) {
     variablesGlobal.forEach(function(varGlobal) {
       var itemList = [];
       if (varGlobal.count === 1)
-        itemList.push(varGlobal.name, varGlobal.count);
+        //itemList.push(varGlobal.name, varGlobal.count);
+        itemList.push(varGlobal.name, 0.1, "#FF0000");
       else
-        itemList.push(varGlobal.name, Math.log(varGlobal.count));
+        itemList.push(varGlobal.name, Math.log(varGlobal.count), "#FF0000");
       itemListJS.push(JSON.stringify(itemList));
     });
 

@@ -47,16 +47,36 @@ $("#get-wordcloud").on("click", function() {
         wc.hideLoading()
         wc.setOption(option)
       }, 10)
-
       var option8 = {
         tooltip: {
           show: true,
           formatter: function(item) {
-            return item[0] + ': ' + item[1] + '<br>' + ''
+            return item[0] + ', ' + item[1] + ', ' + item[2] + '<br>' + ''
           }
         },
         list: list,
-        color: '#15a4fa',
+        //  color: '#15a4fa',
+        color: function(item) {
+          console.log(item);
+          for (var i = 0; i < list.length; i++) {
+            var array = list[i];
+            for (var j = 0; j < array.length; j++) {
+              if (array[j] == item) {
+                console.log(array[2]);
+                //return '\'' + array[2] + '\'';
+                return array[2];
+              }
+            }
+          }
+          // index.forEach(function(elem) {
+          //   console.log(elem);
+          // });
+          //console.log(index);
+          // console.log("item 2: " + index[2]);
+          // var sape = '\'' + index[2] + '\'';
+          // console.log(sape);
+          // return sape;
+        },
         shape: 'circle',
         ellipticity: 1
       }

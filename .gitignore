@@ -1,6 +1,7 @@
 .idea/
 package-lock.json
 views/code-art-graph_back.html
+views/js/wordcloud2_.js
 test/code_art_back.js
 test/respaldo_code_art_20171026.js
 # Logs
