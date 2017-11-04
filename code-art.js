@@ -118,6 +118,12 @@ function enter(node) {
       checkExternalTotal(externalsTotal, nameExternal);
     }
   }
+  if (node.type === "TryStatement" || node.type === "ForStatement" ||
+    node.type === "IfStatement" || node.type === "WhileStatement" ||
+    node.type === "SwitchStatement") {
+    console.log(node);
+    size = size + node.body.body.length;
+  }
 }
 
 function checkGlobal(node, name, type) {
