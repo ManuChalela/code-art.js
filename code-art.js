@@ -492,9 +492,11 @@ function printLeave(graph) {
       var itemList = [];
       if (functionList[i].size === 1)
         //  itemList.push(functionList[i].name, functionList[i].size);
-        itemList.push(functionList[i].name, 0.1, "#15a4fa");
+        //itemList.push(functionList[i].name, 0.1, "#15a4fa", "sans-serif");
+        itemList.push(functionList[i].name, 0.1, getColorNotRed(), "sans-serif");
       else
-        itemList.push(functionList[i].name, Math.log(functionList[i].size), "#15a4fa");
+        //itemList.push(functionList[i].name, Math.log(functionList[i].size), "#15a4fa", "sans-serif");
+        itemList.push(functionList[i].name, Math.log(functionList[i].size), getColorNotRed(), "sans-serif");
       itemListJS.push(JSON.stringify(itemList));
 
       // Agrego las globales de cada function a variablesGlobal
@@ -509,9 +511,9 @@ function printLeave(graph) {
       var itemList = [];
       if (varGlobal.count === 1)
         //itemList.push(varGlobal.name, varGlobal.count);
-        itemList.push(varGlobal.name, 0.1, "#FF0000");
+        itemList.push(varGlobal.name, 0.1, "#FF0000", "courier");
       else
-        itemList.push(varGlobal.name, Math.log(varGlobal.count), "#FF0000");
+        itemList.push(varGlobal.name, Math.log(varGlobal.count), "#FF0000", "courier");
       itemListJS.push(JSON.stringify(itemList));
     });
 
@@ -715,4 +717,25 @@ function getNode(graph, nodeId) {
   } else {
     return null;
   }
+}
+
+function getRandomColor() {
+  var letters = "0123456789ABCDEF";
+  var color = "#";
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
+function getColorNotRed() {
+  var color = "";
+  do {
+    color = getRandomColor();
+  } while (color === "#FF0000");
+  return color;
+}
+
+function getRandomRGBColor() {
+  return "rgb(" + Math.floor(Math.random() * 255) + ", " + Math.floor(Math.random() * 255) + ", " + Math.floor(Math.random() * 255) + ")";
 }

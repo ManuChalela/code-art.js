@@ -51,7 +51,7 @@ $("#get-wordcloud").on("click", function() {
         tooltip: {
           show: true,
           formatter: function(item) {
-            return item[0] + ', ' + item[1] + ', ' + item[2] + '<br>' + ''
+            return item[0] + ', ' + item[1] + ', ' + item[2] + ', ' + item[3] + '<br>' + ''
           }
         },
         list: list,
@@ -68,15 +68,19 @@ $("#get-wordcloud").on("click", function() {
               }
             }
           }
-          // index.forEach(function(elem) {
-          //   console.log(elem);
-          // });
-          //console.log(index);
-          // console.log("item 2: " + index[2]);
-          // var sape = '\'' + index[2] + '\'';
-          // console.log(sape);
-          // return sape;
         },
+        // fontFamily: function(item) {
+        //   for (var i = 0; i < list.length; i++) {
+        //     var array = list[i];
+        //     for (var j = 0; j < array.length; j++) {
+        //       if (array[j] == item) {
+        //         console.log(array[3]);
+        //         //return '\'' + array[2] + '\'';
+        //         return array[3];
+        //       }
+        //     }
+        //   }
+        // },
         shape: 'circle',
         ellipticity: 1
       }
