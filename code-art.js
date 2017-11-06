@@ -121,8 +121,14 @@ function enter(node) {
   if (node.type === "TryStatement" || node.type === "ForStatement" ||
     node.type === "IfStatement" || node.type === "WhileStatement" ||
     node.type === "SwitchStatement") {
-    console.log(node);
-    size = size + node.body.body.length;
+    if (node.body) {
+      console.log(node.body);
+      if (node.body.body) {
+        size = size + node.body.body.length;
+      } else {
+        size = size + 1;
+      }
+    }
   }
 }
 
@@ -220,12 +226,16 @@ function processRequires(node) {
   }
 }
 
-function ItemFunction(name, locals, globals, externals, size) {
+function ItemFunction(name, locals, globals, externals, size, color, fontFamily, bold, italic) {
   this.name = name;
   this.locals = locals;
   this.globals = globals;
   this.externals = externals;
   this.size = size;
+  this.color = color;
+  this.fontFamily = fontFamily;
+  this.bold = bold;
+  this.italic = italic;
 }
 
 function ItemVariable(name) {
@@ -263,7 +273,11 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
       var locals = [];
       var globals = [];
       var externals = [];
-      var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals, size);
+      var color = getColorNotRed();
+      var fontFamily = "";
+      var bold = "";
+      var italic = "";
+      var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals, size, color, fontFamily, bold, italic);
       if (type === 'locals') {
         itemFunction.locals.push(itemVariable);
       } else if (type === 'globals') {
@@ -286,7 +300,11 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
           var locals = [];
           var globals = [];
           var externals = [];
-          var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals, size);
+          var color = getColorNotRed();
+          var fontFamily = "";
+          var bold = "";
+          var italic = "";
+          var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals, size, color, fontFamily, bold, italic);
           if (type === 'locals') {
             itemFunction.locals.push(itemVariable);
           } else if (type === 'globals') {
@@ -360,9 +378,13 @@ function addExternalToFunction(nameItemFunction, namesExternals, functionList) {
   var locals = [];
   var globals = [];
   var externals = [];
+  var color = getColorNotRed();
+  var fontFamily = "";
+  var bold = "";
+  var italic = "";
   if (nameItemFunction != undefined && namesExternals.length != 0) {
     if (functionList.length === 0) {
-      var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals, size);
+      var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals, size, color, fontFamily, bold, italic);
       namesExternals.forEach(function(nameExternal) {
         var itemExternal = new ItemExternal(nameExternal);
         var indiceExternal = arrayObjectIndexOf(namesExternals, nameExternal, "name");
@@ -379,7 +401,7 @@ function addExternalToFunction(nameItemFunction, namesExternals, functionList) {
       if (indice == -1) { // No encontró el nombre de la function
         namesExternals.forEach(function(nameExternal) {
           var itemExternal = new ItemExternal(nameExternal);
-          var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals, size);
+          var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals, size, color, fontFamily, bold, italic);
           itemFunction.externals.push(itemExternal);
           checkExternalTotal(externalsTotal, nameExternal);
           functionList.push(itemFunction);
@@ -493,10 +515,12 @@ function printLeave(graph) {
       if (functionList[i].size === 1)
         //  itemList.push(functionList[i].name, functionList[i].size);
         //itemList.push(functionList[i].name, 0.1, "#15a4fa", "sans-serif");
-        itemList.push(functionList[i].name, 0.1, getColorNotRed(), "sans-serif");
+        //itemList.push(functionList[i].name, 0.1, getColorNotRed(), "sans-serif");
+        itemList.push(functionList[i].name, 0.1, functionList[i].color, functionList[i].fontFamily, functionList[i].bold, functionList[i].italic);
       else
         //itemList.push(functionList[i].name, Math.log(functionList[i].size), "#15a4fa", "sans-serif");
-        itemList.push(functionList[i].name, Math.log(functionList[i].size), getColorNotRed(), "sans-serif");
+        //itemList.push(functionList[i].name, Math.log(functionList[i].size), getColorNotRed(), "sans-serif");
+        itemList.push(functionList[i].name, Math.log(functionList[i].size), functionList[i].color, functionList[i].fontFamily, functionList[i].bold, functionList[i].italic);
       itemListJS.push(JSON.stringify(itemList));
 
       // Agrego las globales de cada function a variablesGlobal
@@ -609,7 +633,7 @@ function isVarDefined(varname, scopeChain) {
 
 function checkForLeaks(assignments, scopeChain, functionList) {
   for (var i = 0; i < assignments.length; i++) {
-    console.log(assignment);
+    //console.log(assignment);
     var assignment = assignments[i];
     var varname = assignment.left.name;
     if (!isVarDefined(varname, scopeChain)) {

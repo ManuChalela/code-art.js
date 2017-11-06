@@ -51,7 +51,7 @@ $("#get-wordcloud").on("click", function() {
         tooltip: {
           show: true,
           formatter: function(item) {
-            return item[0] + ', ' + item[1] + ', ' + item[2] + ', ' + item[3] + '<br>' + ''
+            return 'Name: ' + item[0] + ', Size: ' + item[1] + ', Color: ' + item[2] + ', Font Family: ' + item[3] + ', Bold: ' + item[4] + ', Italic: ' + item[5] + '<br>' + ''
           }
         },
         list: list,
