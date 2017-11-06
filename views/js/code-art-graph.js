@@ -63,30 +63,33 @@ $("#get-wordcloud").on("click", function() {
         list: list,
         //  color: '#15a4fa',
         color: function(item) {
-          console.log(item);
+          //console.log(item);
           for (var i = 0; i < list.length; i++) {
             var array = list[i];
             for (var j = 0; j < array.length; j++) {
               if (array[j] == item) {
-                console.log(array[2]);
+                //    console.log(array[2]);
                 //return '\'' + array[2] + '\'';
                 return array[2];
               }
             }
           }
         },
-        // fontFamily: function(item) {
-        //   for (var i = 0; i < list.length; i++) {
-        //     var array = list[i];
-        //     for (var j = 0; j < array.length; j++) {
-        //       if (array[j] == item) {
-        //         console.log(array[3]);
-        //         //return '\'' + array[2] + '\'';
-        //         return array[3];
-        //       }
-        //     }
-        //   }
-        // },
+        textStyle: {
+          fontFamily: function(item) {
+            console.log(item);
+            for (var i = 0; i < list.length; i++) {
+              var array = list[i];
+              for (var j = 0; j < array.length; j++) {
+                if (array[j] == item) {
+                  console.log(array[3]);
+                  //return '\'' + array[2] + '\'';
+                  return '\'' + array[3] + '\'';
+                }
+              }
+            }
+          }
+        },
         shape: 'circle',
         ellipticity: 1
       }

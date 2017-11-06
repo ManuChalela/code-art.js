@@ -224,7 +224,17 @@ if (!window.clearImmediate) {
         }
       }
     }
+    /* convert fontFamily into a function */
+    if (typeof settings.fontFamily !== 'function') {
+      (function() {
+        var value = settings.fontFamily;
+        settings.fontFamily = function fontFamily(word) {
+          return value;
+        };
+      })();
+    }
 
+    // fontFamily 1
     /* Convert weightFactor into a function */
     if (typeof settings.weightFactor !== 'function') {
       var factor = settings.weightFactor;
@@ -534,9 +544,12 @@ if (!window.clearImmediate) {
         willReadFrequently: true
       });
 
-      fctx.font = settings.fontWeight + ' ' +
-        (fontSize * mu).toString(10) + 'px ' + settings.fontFamily;
+      // fctx.font = settings.fontWeight + ' ' +
+      //   (fontSize * mu).toString(10) + 'px ' + settings.fontFamily;
+      // fontFamily 2
+      fctx.font = settings.fontWeight(word) + ' ' + (fontSize * mu).toString(10) + 'px ' + settings.fontFamily(word);
 
+      // Estimate the dimension of the text with measureText().
       // Estimate the dimension of the text with measureText().
       var fw = fctx.measureText(word).width / mu;
       var fh = Math.max(fontSize * mu,
@@ -587,8 +600,11 @@ if (!window.clearImmediate) {
 
       // Once the width/height is set, ctx info will be reset.
       // Set it again here.
-      fctx.font = settings.fontWeight + ' ' +
-        (fontSize * mu).toString(10) + 'px ' + settings.fontFamily;
+      // fctx.font = settings.fontWeight + ' ' +
+      //   (fontSize * mu).toString(10) + 'px ' + settings.fontFamily;
+
+      // fontFamily 3
+      fctx.font = settings.fontWeight(word) + ' ' + (fontSize * mu).toString(10) + 'px ' + settings.fontFamily(word);
 
       // Fill the text into the fcanvas.
       // XXX: We cannot because textBaseline = 'top' here because
@@ -744,8 +760,11 @@ if (!window.clearImmediate) {
           ctx.save();
           ctx.scale(1 / mu, 1 / mu);
 
-          ctx.font = settings.fontWeight + ' ' +
-            (fontSize * mu).toString(10) + 'px ' + settings.fontFamily;
+          // ctx.font = settings.fontWeight + ' ' +
+          //   (fontSize * mu).toString(10) + 'px ' + settings.fontFamily;
+          // fontFamily 4
+          ctx.font = settings.fontWeight(word) + ' ' +
+            (fontSize * mu).toString(10) + 'px ' + settings.fontFamily(word);
           ctx.fillStyle = color;
 
           // Translate the canvas position to the origin coordinate of where
@@ -787,8 +806,11 @@ if (!window.clearImmediate) {
           var styleRules = {
             'position': 'absolute',
             'display': 'block',
-            'font': settings.fontWeight + ' ' +
-              (fontSize * info.mu) + 'px ' + settings.fontFamily,
+            // 'font': settings.fontWeight + ' ' +
+            //   (fontSize * info.mu) + 'px ' + settings.fontFamily,
+            // fontFamily 5
+            'font': settings.fontWeight(word) + ' ' +
+              (fontSize * info.mu) + 'px ' + settings.fontFamily(word),
             'left': ((gx + info.gw / 2) * g + info.fillTextOffsetX) + 'px',
             'top': ((gy + info.gh / 2) * g + info.fillTextOffsetY) + 'px',
             'width': info.fillTextWidth + 'px',
@@ -1199,5 +1221,4 @@ if (!window.clearImmediate) {
   } else {
     global.WordCloud = WordCloud;
   }
-
 })(this); //jshint ignore:line
