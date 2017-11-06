@@ -274,7 +274,7 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
       var globals = [];
       var externals = [];
       var color = getColorNotRed();
-      var fontFamily = "";
+      var fontFamily = getRandomFontFamily();
       var bold = "";
       var italic = "";
       var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals, size, color, fontFamily, bold, italic);
@@ -301,7 +301,7 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
           var globals = [];
           var externals = [];
           var color = getColorNotRed();
-          var fontFamily = "";
+          var fontFamily = getRandomFontFamily();
           var bold = "";
           var italic = "";
           var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals, size, color, fontFamily, bold, italic);
@@ -379,7 +379,7 @@ function addExternalToFunction(nameItemFunction, namesExternals, functionList) {
   var globals = [];
   var externals = [];
   var color = getColorNotRed();
-  var fontFamily = "";
+  var fontFamily = getRandomFontFamily();
   var bold = "";
   var italic = "";
   if (nameItemFunction != undefined && namesExternals.length != 0) {
@@ -762,4 +762,9 @@ function getColorNotRed() {
 
 function getRandomRGBColor() {
   return "rgb(" + Math.floor(Math.random() * 255) + ", " + Math.floor(Math.random() * 255) + ", " + Math.floor(Math.random() * 255) + ")";
+}
+
+function getRandomFontFamily() {
+  var fontFamilyList = ["Georgia", "Palatino Linotype", "Book Antiqua", "Palatino", "Times New Roman", "Arial", "Helvetica", "Arial Black", "Comic Sans MS", "Impact", "Charcoal", "Lucida Sans Unicode", "Lucida Grande", "Tahoma", "Geneva", "Trebuchet MS", "Helvetica", "Verdana", "Geneva", "Courier New", "Lucida Console"];
+  return fontFamilyList[Math.floor(Math.random() * fontFamilyList.length)];
 }
