@@ -766,6 +766,6 @@ function getRandomFontFamily() {
 }
 
 function getRandomWeight() {
-  var weightList = ["", "normal", "bold", "italic"];
+  var weightList = ["normal", "bold", "italic"];
   return weightList[Math.floor(Math.random() * weightList.length)];
 }

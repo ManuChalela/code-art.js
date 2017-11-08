@@ -381,6 +381,17 @@
             if (typeof option.noDataLoadingOption.textStyle.fontSize === 'number') {
               STYLE += 'font-size: ' + option.noDataLoadingOption.textStyle.fontSize + 'px;';
             }
+            // FIXME
+            // if (typeof option.noDataLoadingOption.textStyle.fontWeight === 'function') {
+            //   STYLE += 'font-weight: ' + eval(option.noDataLoadingOption.textStyle.fontWeight);
+            //   console.log(STYLE);
+            // }
+
+            //FIXME
+            // if (typeof option.noDataLoadingOption.textStyle.fontFamily === 'function') {
+            //   STYLE += 'font-family: ' + eval(option.noDataLoadingOption.textStyle.fontFamily);
+            //   console.log(STYLE);
+            // }
           }
           if (typeof option.noDataLoadingOption.backgroundColor === 'string') {
             this._dataMask.style.backgroundColor = option.noDataLoadingOption.backgroundColor;
@@ -819,6 +830,22 @@
                 }
                 break;
             }
+            var getFontWeight;
+            switch (settings.fontWeight) {
+              default: if (typeof settings.fontWeight === 'function') {
+                getFontWeight = settings.fontWeight;
+              }
+              break;
+            }
+
+            var getFontFamily;
+            switch (settings.fontFamily) {
+              default: if (typeof settings.fontFamily === 'function') {
+                getFontFamily = settings.fontFamily;
+              }
+              break;
+            }
+
 
             /* function for getting the classes of the text */
             var getTextClasses = null;
@@ -934,8 +961,8 @@
 
               return minRotation + Math.random() * rotationRange;
             };
-
-            var getTextInfo = function getTextInfo(word, weight, rotateDeg) {
+            //FIXME agrego como parámetro fontWeight y fontFamily
+            var getTextInfo = function getTextInfo(word, weight, rotateDeg, fontWeight, fontFamily) {
               // calculate the acutal font size
               // fontSize === 0 means weightFactor function wants the text skipped,
               // and size < minSize means we cannot draw the text.
