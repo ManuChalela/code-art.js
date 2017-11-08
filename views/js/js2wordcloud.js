@@ -963,8 +963,18 @@
               var fctx = fcanvas.getContext('2d', {
                 willReadFrequently: true
               });
+              var fontW = "";
+              if (typeof settings.fontWeight === 'function') {
+                fontW = settings.fontWeight;
+              }
+              var fontF = "";
+              if (typeof settings.fontFamily === 'function') {
+                fontF = settings.fontFamily;
+              }
 
-              fctx.font = settings.fontWeight + ' ' + (fontSize * mu).toString(10) + 'px ' + settings.fontFamily;
+              // TODO
+              //fctx.font = settings.fontWeight + ' ' + (fontSize * mu).toString(10) + 'px ' + settings.fontFamily;
+              fctx.font = fontW + ' ' + (fontSize * mu).toString(10) + 'px ' + fontF;
 
               // Estimate the dimension of the text with measureText().
               var fw = fctx.measureText(word).width / mu;

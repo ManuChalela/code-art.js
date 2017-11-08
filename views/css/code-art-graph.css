@@ -21,13 +21,13 @@ body {
     border: 1px solid #9a9898;
 }*/
 
-#get-nodes, #get-wordcloud{
+#get-nodes, #get-wordcloud, #get-own-wordcloud{
     float:left;
     background: #2B3840;
     color: white;
     border: 1px solid #9a9898;
 }
-#save-nodes, #save-wordcloud{
+#save-nodes, #save-wordcloud, #save-own-wordcloud{
     float:right;
     background: #2B3840;
     color: white;

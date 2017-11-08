@@ -53,9 +53,7 @@ $("#get-wordcloud").on("click", function() {
           formatter: function(item) {
             var resultFormat = 'Name: ' + item[0] + ', Size: ' + item[1] + ', Color: ' + item[2] + ', Font Family: ' + item[3];
             if (item[4])
-              resultFormat += ', Bold: ' + item[4];
-            if (item[5])
-              resultFormat += ', Italic: ' + item[5];
+              resultFormat += ', Font Weight: ' + item[4];
             resultFormat += '<br>' + ''
             return resultFormat;
           }
@@ -75,20 +73,34 @@ $("#get-wordcloud").on("click", function() {
             }
           }
         },
-        textStyle: {
-          fontFamily: function(item) {
-            console.log(item);
-            for (var i = 0; i < list.length; i++) {
-              var array = list[i];
-              for (var j = 0; j < array.length; j++) {
-                if (array[j] == item) {
-                  console.log(array[3]);
-                  //return '\'' + array[2] + '\'';
-                  return '\'' + array[3] + '\'';
+        fontWeight: function(item) {
+          console.log(item);
+          for (var i = 0; i < list.length; i++) {
+            var array = list[i];
+            for (var j = 0; j < array.length; j++) {
+              if (array[j] == item) {
+                console.log("fontWeight: " + array[4]);
+                if (array[4]) {
+                  return '\'' + array[4] + " " + '\'';
+                } else {
+                  console.log("Error en fontWeight!");
                 }
               }
             }
           }
+        },
+        fontFamily: function(item) {
+          for (var i = 0; i < list.length; i++) {
+            var array = list[i];
+            for (var j = 0; j < array.length; j++) {
+              if (array[j] == item) {
+                console.log(array[3]);
+                //return '\'' + array[2] + '\'';
+                return '\'' + array[3] + '\'';
+              }
+            }
+          }
+          console.log(item);
         },
         shape: 'circle',
         ellipticity: 1
@@ -105,6 +117,47 @@ $("#get-wordcloud").on("click", function() {
     }
   });
 });
+$("#get-own-wordcloud").on("click", function() {
+  $.get('/getWordCloud', function(list) {
+    var ownWordcloud = document.getElementById('ownWordcloud');
+    if (list) {
+      var ctx = ownWordcloud.getContext("2d");
+      var dataURL = ownWordcloud.toDataURL();
+      document.getElementById('ownWordcloud').src = dataURL;
+      for (var i = 0; i < list.length; i++) {
+        var array = list[i];
+        var fontSize = 12;
+        var minFontSize = 10;
+        // Scale factor here is to make sure fillText is not limited by
+        // the minium font size set by browser.
+        // It will always be 1 or 2n.
+        var mu = 1;
+        if (fontSize < minFontSize) {
+          mu = function calculateScaleFactor() {
+            var mu = 2;
+            while (mu * fontSize < minFontSize) {
+              mu += 2;
+            }
+            return mu;
+          }();
+        }
+        ctx.font = array[1] + ' ' + (fontSize * mu).toString(10) + 'px ' + array[3];
+        ctx.fillStyle = array[2];
+        ctx.fillText(array[0], i, i * 20);
+      }
+      // ctx.font = "20px " + list[0][3];
+      // ctx.fillStyle = list[0][2];
+      // ctx.fillText(list[0][0], 10, 10);
+      //
+      // ctx.font = "20px " + list[1][3];
+      // ctx.fillStyle = list[1][2];
+      // ctx.fillText(list[1][0], 10, 30);
+    } else {
+      ownWordcloud.innerHTML = "Unable to construct your own wordcloud.";
+    }
+  });
+});
+
 $("#save-nodes").on("click", function() {
   $.get('/saveGraph', function(graphGlobal) {
     var container = document.getElementById('mynetwork');
@@ -113,8 +166,6 @@ $("#save-nodes").on("click", function() {
       var ctx = canvasGraph.getContext('2d');
       var dataURL = canvasGraph.toDataURL();
       document.getElementById('mynetwork').src = dataURL;
-      console.log(dataURL);
-      console.log("afterDrawing networkGlobal");
       domtoimage.toJpeg(document.getElementById('mynetwork'), {
           quality: 0.95
         })

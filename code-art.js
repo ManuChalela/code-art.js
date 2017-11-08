@@ -226,7 +226,7 @@ function processRequires(node) {
   }
 }
 
-function ItemFunction(name, locals, globals, externals, size, color, fontFamily, bold, italic) {
+function ItemFunction(name, locals, globals, externals, size, color, fontFamily, fontWeight) {
   this.name = name;
   this.locals = locals;
   this.globals = globals;
@@ -234,8 +234,7 @@ function ItemFunction(name, locals, globals, externals, size, color, fontFamily,
   this.size = size;
   this.color = color;
   this.fontFamily = fontFamily;
-  this.bold = bold;
-  this.italic = italic;
+  this.fontWeight = fontWeight;
 }
 
 function ItemVariable(name) {
@@ -275,9 +274,8 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
       var externals = [];
       var color = getColorNotRed();
       var fontFamily = getRandomFontFamily();
-      var bold = "";
-      var italic = "";
-      var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals, size, color, fontFamily, bold, italic);
+      var fontWeight = getRandomWeight();
+      var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals, size, color, fontFamily, fontWeight);
       if (type === 'locals') {
         itemFunction.locals.push(itemVariable);
       } else if (type === 'globals') {
@@ -302,9 +300,8 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
           var externals = [];
           var color = getColorNotRed();
           var fontFamily = getRandomFontFamily();
-          var bold = "";
-          var italic = "";
-          var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals, size, color, fontFamily, bold, italic);
+          var fontWeight = getRandomWeight();
+          var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals, size, color, fontFamily, fontWeight);
           if (type === 'locals') {
             itemFunction.locals.push(itemVariable);
           } else if (type === 'globals') {
@@ -380,11 +377,10 @@ function addExternalToFunction(nameItemFunction, namesExternals, functionList) {
   var externals = [];
   var color = getColorNotRed();
   var fontFamily = getRandomFontFamily();
-  var bold = "";
-  var italic = "";
+  var fontWeight = getRandomWeight();
   if (nameItemFunction != undefined && namesExternals.length != 0) {
     if (functionList.length === 0) {
-      var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals, size, color, fontFamily, bold, italic);
+      var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals, size, color, fontFamily, fontWeight);
       namesExternals.forEach(function(nameExternal) {
         var itemExternal = new ItemExternal(nameExternal);
         var indiceExternal = arrayObjectIndexOf(namesExternals, nameExternal, "name");
@@ -401,7 +397,7 @@ function addExternalToFunction(nameItemFunction, namesExternals, functionList) {
       if (indice == -1) { // No encontró el nombre de la function
         namesExternals.forEach(function(nameExternal) {
           var itemExternal = new ItemExternal(nameExternal);
-          var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals, size, color, fontFamily, bold, italic);
+          var itemFunction = new ItemFunction(nameItemFunction, locals, globals, externals, size, color, fontFamily, fontWeight);
           itemFunction.externals.push(itemExternal);
           checkExternalTotal(externalsTotal, nameExternal);
           functionList.push(itemFunction);
@@ -516,11 +512,11 @@ function printLeave(graph) {
         //  itemList.push(functionList[i].name, functionList[i].size);
         //itemList.push(functionList[i].name, 0.1, "#15a4fa", "sans-serif");
         //itemList.push(functionList[i].name, 0.1, getColorNotRed(), "sans-serif");
-        itemList.push(functionList[i].name, 0.1, functionList[i].color, functionList[i].fontFamily, functionList[i].bold, functionList[i].italic);
+        itemList.push(functionList[i].name, 0.1, functionList[i].color, functionList[i].fontFamily, functionList[i].fontWeight);
       else
         //itemList.push(functionList[i].name, Math.log(functionList[i].size), "#15a4fa", "sans-serif");
         //itemList.push(functionList[i].name, Math.log(functionList[i].size), getColorNotRed(), "sans-serif");
-        itemList.push(functionList[i].name, Math.log(functionList[i].size), functionList[i].color, functionList[i].fontFamily, functionList[i].bold, functionList[i].italic);
+        itemList.push(functionList[i].name, Math.log(functionList[i].size), functionList[i].color, functionList[i].fontFamily, functionList[i].fontWeight);
       itemListJS.push(JSON.stringify(itemList));
 
       // Agrego las globales de cada function a variablesGlobal
@@ -767,4 +763,9 @@ function getRandomRGBColor() {
 function getRandomFontFamily() {
   var fontFamilyList = ["Georgia", "Palatino Linotype", "Book Antiqua", "Palatino", "Times New Roman", "Arial", "Helvetica", "Arial Black", "Comic Sans MS", "Impact", "Charcoal", "Lucida Sans Unicode", "Lucida Grande", "Tahoma", "Geneva", "Trebuchet MS", "Helvetica", "Verdana", "Geneva", "Courier New", "Lucida Console"];
   return fontFamilyList[Math.floor(Math.random() * fontFamilyList.length)];
+}
+
+function getRandomWeight() {
+  var weightList = ["", "normal", "bold", "italic"];
+  return weightList[Math.floor(Math.random() * weightList.length)];
 }
