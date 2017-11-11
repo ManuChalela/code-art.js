@@ -80,7 +80,7 @@ $("#get-wordcloud").on("click", function() {
               }
               console.log(item);
             },
-            fontSize: 20
+            fontSize: 2
           }
         }
       }
@@ -169,8 +169,8 @@ $("#get-own-wordcloud").on("click", function() {
       document.getElementById('ownWordcloud').src = dataURL;
       for (var i = 0; i < list.length; i++) {
         var array = list[i];
-        var fontSize = 12;
-        var minFontSize = 10;
+        var fontSize = 2;
+        var minFontSize = 1;
         // Scale factor here is to make sure fillText is not limited by
         // the minium font size set by browser.
         // It will always be 1 or 2n.

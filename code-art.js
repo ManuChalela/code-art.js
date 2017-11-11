@@ -27,6 +27,7 @@ var variablesTotal = [];
 var variablesGlobal = [];
 var size = 0;
 var FinalList = [];
+var FunctionDefTotal = [];
 var min = Number.MAX_VALUE;
 var max = Number.MIN_VALUE;
 estraverse.traverse(ast, {
@@ -125,7 +126,7 @@ function enter(node) {
     node.type === "IfStatement" || node.type === "WhileStatement" ||
     node.type === "SwitchStatement") {
     if (node.body) {
-      console.log(node.body);
+      //  console.log(node.body);
       if (node.body.body) {
         size = size + node.body.body.length;
       } else {
@@ -521,8 +522,12 @@ function printLeave(graph) {
       //   itemList.push(functionList[i].name, 0.1, functionList[i].color, functionList[i].fontFamily, functionList[i].fontWeight);
       // else
       //   itemList.push(functionList[i].name, Math.log(functionList[i].size), functionList[i].color, functionList[i].fontFamily, functionList[i].fontWeight);
-      itemList.push(functionList[i].name, 2 + Math.log(functionList[i].size), functionList[i].color, functionList[i].fontFamily, functionList[i].fontWeight);
+      var size = Math.round(Math.log(functionList[i].size) * 100) / 100;
+      itemList.push(functionList[i].name, 2 + size, functionList[i].color, functionList[i].fontFamily, functionList[i].fontWeight);
       itemListJS.push(JSON.stringify(itemList));
+      var item = functionList[i];
+      var itemVariableTotal = new ItemVariableTotal(item.name, 2 + Math.round(Math.log(item.size) * 100) / 100, item.color, item.fontFamily, item.fontWeight);
+      FunctionDefTotal.push(itemVariableTotal);
 
       // Agrego las globales de cada function a variablesGlobal
       if (functionList[i].globals) {
@@ -539,16 +544,18 @@ function printLeave(graph) {
       //   itemList.push(varGlobal.name, 0.1, "#FF0000", "courier");
       // else
       //   itemList.push(varGlobal.name, Math.log(varGlobal.count), "#FF0000", "courier");
-      itemList.push(varGlobal.name, 2 + Math.log(varGlobal.count), varGlobal.color, varGlobal.fontFamily, varGlobal.fontWeight);
+
+      itemList.push(varGlobal.name, 2 + Math.round(Math.log(varGlobal.count) * 100) / 100, varGlobal.color, varGlobal.fontFamily, varGlobal.fontWeight);
       itemListJS.push(JSON.stringify(itemList));
+    });
+
+    itemListJS = "[" + itemListJS + "]";
+    fs.writeFile('views/list.json', itemListJS, 'utf8', function(err) {
+      if (err) throw err;
     });
 
     nodesJS = "[" + nodesJS + "]";
     fs.writeFile('nodes.json', nodesJS, 'utf8', function(err) {
-      if (err) throw err;
-    });
-    itemListJS = "[" + itemListJS + "]";
-    fs.writeFile('views/list.json', itemListJS, 'utf8', function(err) {
       if (err) throw err;
     });
 
@@ -618,19 +625,13 @@ function printLeave(graph) {
     } else {
       console.log("externalsTotal empty.");
     }
-    if (variablesGlobal.length > 0 && externalsTotal.length > 0) {
+    if (variablesGlobal.length > 0 && FunctionDefTotal.length > 0) {
       finalList = variablesGlobal;
-      finalList = finalList.concat(externalsTotal);
-      console.log("FinalList: ");
-      console.log(JSON.stringify(finalList));
+      finalList = finalList.concat(FunctionDefTotal);
     } else if (variablesGlobal.length > 0) {
       finalList = variablesGlobal;
-      console.log("FinalList: ");
-      console.log(JSON.stringify(finalList));
-    } else if (externalsTotal.length > 0) {
-      finalList = externalsTotal;
-      console.log("FinalList: ");
-      console.log(JSON.stringify(finalList));
+    } else if (FunctionDefTotal.length > 0) {
+      finalList = FunctionDefTotal;
     } else {
       console.log("Error with finalList!");
     }
@@ -643,10 +644,50 @@ function printLeave(graph) {
     console.log("Min: " + min);
     console.log("Max: " + max);
     console.log("Length: " + finalList.length);
+    setColorByCount(finalList, min, max);
+
+    var itemFinalListJS = [];
+    for (var i = 0; i < finalList.length; i++) {
+      var itemList = [];
+      var size = Math.round(Math.log(finalList[i].count) * 100) / 100;
+      itemList.push(finalList[i].name, 2 + size, finalList[i].color, finalList[i].fontFamily, finalList[i].fontWeight);
+      console.log(itemList);
+      itemFinalListJS.push(JSON.stringify(itemList));
+    }
+    itemFinalListJS = "[" + itemFinalListJS + "]";
+    fs.writeFile('views/finalList.json', itemFinalListJS, 'utf8', function(err) {
+      if (err) throw err;
+    });
   } else {
     console.log("Graph empty.");
   }
 }
+
+function setColorByCount(finalList, min, max) {
+  if (finalList.length > 0 && min > 0 && max > 0) {
+    var start = "#0000FF";
+    var end = "#FF0000";
+    for (var i = 0; i < finalList.length; i++) {
+      switch (finalList[i].count) {
+        case min:
+          finalList[i].color = start;
+          break;
+        case max:
+          finalList[i].color = end;
+          console.log("entro al max: " + finalList[i].name + " " + finalList[i].color);
+          console.log("min: " + min);
+          console.log("max: " + max);
+        default:
+          finalList[i].color = interpoolateColor(start, end, 0.5);
+          break;
+      }
+    }
+    console.log("FinalList: ");
+    console.log(JSON.stringify(finalList));
+    return finalList;
+  }
+}
+
 
 function isVarDefined(varname, scopeChain) {
   for (var i = 0; i < scopeChain.length; i++) {
@@ -801,38 +842,19 @@ function getRandomWeight() {
   return weightList[Math.floor(Math.random() * weightList.length)];
 }
 
+function interpoolateColor(start, end, count) {
 
-// Converts a #ffffff hex string into an [r,g,b] array
-var h2r = function(hex) {
-  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result ? [
-    parseInt(result[1], 16),
-    parseInt(result[2], 16),
-    parseInt(result[3], 16)
-  ] : null;
-};
+  var ah = parseInt(start.replace(/#/g, ''), 16),
+    ar = ah >> 16,
+    ag = ah >> 8 & 0xff,
+    ab = ah & 0xff,
+    bh = parseInt(end.replace(/#/g, ''), 16),
+    br = bh >> 16,
+    bg = bh >> 8 & 0xff,
+    bb = bh & 0xff,
+    rr = ar + count * (br - ar),
+    rg = ag + count * (bg - ag),
+    rb = ab + count * (bb - ab);
 
-// Inverse of the above
-var r2h = function(rgb) {
-  return "#" + ((1 << 24) + (rgb[0] << 16) + (rgb[1] << 8) + rgb[2]).toString(16).slice(1);
-};
-
-// Interpolates two [r,g,b] colors and returns an [r,g,b] of the result
-// Taken from the awesome ROT.js roguelike dev library at
-// https://github.com/ondras/rot.js
-var color1 = "#0000FF";
-var color2 = "#FF0000";
-var factor = 20;
-var _interpolateColor = function(color1, color2, factor) {
-  if (arguments.length < 3) {
-    factor = 0.5;
-  }
-  var result = color1.slice();
-  for (var i = 0; i < 3; i++) {
-    result[i] = Math.round(result[i] + factor * (color2[i] - color1[i]));
-  }
-  console.log(result);
-  return result;
-};
-
-console.log("Color interpolado es: " + _interpolateColor(color1, color2, factor));
+  return '#' + ((1 << 24) + (rr << 16) + (rg << 8) + rb | 0).toString(16).slice(1);
+}
