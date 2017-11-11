@@ -52,18 +52,21 @@ $("#get-wordcloud").on("click", function() {
             },
             fontWeight: function(item) {
               console.log(item);
+              var fontWeightList;
               for (var i = 0; i < list.length; i++) {
                 var array = list[i];
                 for (var j = 0; j < array.length; j++) {
                   if (array[j] == item) {
                     if (array[4]) {
-                      return '\'' + array[4] + " " + '\'';
+                      //return '\'' + array[4] + " " + '\'';
+                      fontWeightList.push('\'' + array[4] + " " + '\'');
                     } else {
                       console.log("Error en fontWeight!");
                     }
                   }
                 }
               }
+              return fontWeightList;
             },
             fontFamily: function(item) {
               for (var i = 0; i < list.length; i++) {

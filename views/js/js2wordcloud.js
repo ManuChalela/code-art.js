@@ -127,199 +127,251 @@
         }
 
         _createClass(Js2WordCloud, [{
-          key: 'setOption',
-          value: function setOption(option) {
-            var _this = this;
+            key: 'setOption',
+            value: function setOption(option) {
+              var _this = this;
 
-            this._option = util.copy(option, true);
-            var __originHoverCb = this._option.hover;
-            this._option.fontFamily = this._option.fontFamily || 'Microsoft YaHei,Helvetica,Times,serif';
-            this._fixWeightFactor(this._option);
-            this._maskCanvas = null;
-            var hoverCb = function hoverCb(item, dimension, event) {
-              if (item) {
-                var html = item[0] + ', ' + item[1] + ', ' + item[2];
-                if (typeof _this._option.tooltip.formatter === 'function') {
-                  html = _this._option.tooltip.formatter(item);
-                }
-                _this._tooltip.innerHTML = html;
-                _this._tooltip.style.top = event.offsetY + 10 + 'px';
-                _this._tooltip.style.left = event.offsetX + 15 + 'px';
-                _this._tooltip.style.display = 'block';
-                _this._wrapper.style.cursor = 'pointer';
-              } else {
-                _this._tooltip.style.display = 'none';
-                _this._wrapper.style.cursor = 'default';
-              }
-              __originHoverCb && __originHoverCb(item, dimension, event);
-            };
-            if (option.tooltip && option.tooltip.show === true) {
-              if (!this._tooltip) {
-                this._tooltip = window.document.createElement('div');
-                this._tooltip.className = "__wc_tooltip__";
-                this._tooltip.style.backgroundColor = option.tooltip.backgroundColor || 'rgba(0, 0, 0, 0.701961)';
-                this._tooltip.style.color = '#fff';
-                this._tooltip.style.padding = '5px';
-                this._tooltip.style.borderRadius = '5px';
-                this._tooltip.style.fontSize = '12px';
-                this._tooltip.style.fontFamily = option.fontFamily || this._option.fontFamily;
-                this._tooltip.style.lineHeight = 1.4;
-                this._tooltip.style.webkitTransition = 'left 0.2s, top 0.2s';
-                this._tooltip.style.mozTransition = 'left 0.2s, top 0.2s';
-                this._tooltip.style.transition = 'left 0.2s, top 0.2s';
-                this._tooltip.style.position = 'absolute';
-                this._tooltip.style.whiteSpace = 'nowrap';
-                this._tooltip.style.zIndex = 999;
-                this._tooltip.style.display = 'none';
-                this._wrapper.appendChild(this._tooltip);
-                this._container.onmouseout = function() {
+              this._option = util.copy(option, true);
+              var __originHoverCb = this._option.hover;
+
+              //FIXME
+              // if (typeof this._option.fontFamily === 'function') {
+              //   console.log("this._option.fontFamily is a function!");
+              //   this._option.fontFamily = this._option.fontFamily;
+              // } else if (typeof this._option.fontFamily === 'string') {
+              //   console.log("this._option.fontFamily is a string!");
+              //   this._option.fontFamily = this._option.fontFamily;
+              // } else {
+              //   //this._option.fontFamily = this._option.fontFamily || 'Microsoft YaHei,Helvetica,Times,serif';
+              //   this._option.fontFamily = 'Microsoft YaHei,Helvetica,Times,serif';
+              // }
+              //FIXME agrego este método
+              this._fixFontWeight(this._option);
+
+              this._fixWeightFactor(this._option);
+              this._maskCanvas = null;
+              var hoverCb = function hoverCb(item, dimension, event) {
+                if (item) {
+                  var html = item[0] + ', ' + item[1] + ', ' + item[2];
+                  if (typeof _this._option.tooltip.formatter === 'function') {
+                    html = _this._option.tooltip.formatter(item);
+                  }
+                  _this._tooltip.innerHTML = html;
+                  _this._tooltip.style.top = event.offsetY + 10 + 'px';
+                  _this._tooltip.style.left = event.offsetX + 15 + 'px';
+                  _this._tooltip.style.display = 'block';
+                  _this._wrapper.style.cursor = 'pointer';
+                } else {
                   _this._tooltip.style.display = 'none';
-                };
-              }
-              this._option.hover = hoverCb;
-            }
-            _sortWorldCloud(this._option);
-
-            if (this._option && /\.(jpg|png)$/.test(this._option.imageShape)) {
-              _imageShape.call(this, this._option);
-            } else if (this._option.shape === 'circle') {
-              _circle.call(this, this._option);
-            } else {
-              _renderShape.call(this, this._option);
-            }
-          }
-          /**
-           * 事件绑定
-           * @todo
-           */
-
-        }, {
-          key: 'on',
-          value: function on() {}
-        }, {
-          key: 'showLoading',
-          value: function showLoading(loadingOption) {
-            var loadingTxt;
-            var DEFAULT_LOADING_TEXT = '正在加载...';
-            var LOADING_LOGO_HTML = '<div class="__wc_loading__">' + '<div></div>' + '<div></div>' + '<div></div>' + '<div></div>' + '<div></div>' + '<div></div>' + '<div></div>' + '<div></div>' + '</div>';
-            if (loadingOption) {
-              if (loadingOption.backgroundColor) {
-                this._dataMask.style.backgroundColor = loadingOption.backgroundColor;
-              }
-              loadingTxt = loadingOption.text === undefined ? DEFAULT_LOADING_TEXT : loadingOption.text;
-              if (loadingOption.effect === 'spin') {
-                this._showMask(LODAING_WRAPPTER_HTML_PRE + LOADING_LOGO_HTML + loadingTxt + LODAING_WRAPPTER_HTML_END);
-                var dom = this._dataMask.childNodes[0].childNodes[0];
-                var paddingLeft = dom.style.paddingLeft;
-                dom.style.paddingLeft = parseInt(paddingLeft) + 45 + 'px';
-              } else {
-                this._showMask(LODAING_WRAPPTER_HTML_PRE + loadingTxt + LODAING_WRAPPTER_HTML_END);
-              }
-            } else {
-              this._showMask(LODAING_WRAPPTER_HTML_PRE + LOADING_LOGO_HTML + DEFAULT_LOADING_TEXT + LODAING_WRAPPTER_HTML_END);
-            }
-          }
-        }, {
-          key: 'hideLoading',
-          value: function hideLoading() {
-            if (this._dataMask) {
-              this._dataMask.style.display = 'none';
-            }
-          }
-        }, {
-          key: 'resize',
-          value: function resize() {
-            this._canvas.width = this._container.clientWidth;
-            this._canvas.height = this._container.clientHeight;
-            _renderShape.call(this, this._option);
-            // this._wordcloud2 = WordCloud(this._canvas, this._option)
-          }
-        }, {
-          key: '_init',
-          value: function _init() {
-            var width = this._container.clientWidth;
-            var height = this._container.clientHeight;
-            this._container.innerHTML = '';
-
-            this._wrapper = window.document.createElement('div');
-            this._wrapper.style.position = 'relative';
-            this._wrapper.style.width = '100%';
-            this._wrapper.style.height = 'inherit';
-
-            this._dataMask = window.document.createElement('div');
-            this._dataMask.height = 'inherit';
-            this._dataMask.style.textAlign = 'center';
-            this._dataMask.style.color = '#888';
-            this._dataMask.style.fontSize = '14px';
-            this._dataMask.style.position = 'absolute';
-            this._dataMask.style.left = '0';
-            this._dataMask.style.right = '0';
-            this._dataMask.style.top = '0';
-            this._dataMask.style.bottom = '0';
-            this._dataMask.style.display = 'none';
-
-            this._wrapper.appendChild(this._dataMask);
-            this._container.appendChild(this._wrapper);
-
-            this._canvas = window.document.createElement('canvas');
-            this._canvas.width = width;
-            this._canvas.height = height;
-            this._wrapper.appendChild(this._canvas);
-          }
-        }, {
-          key: '_fixWeightFactor',
-          value: function _fixWeightFactor(option) {
-            option.maxFontSize = typeof option.maxFontSize === 'number' ? option.maxFontSize : 60;
-            option.minFontSize = typeof option.minFontSize === 'number' ? option.minFontSize : 12;
-            if (option.list && option.list.length > 0) {
-              var min = option.list[0][1];
-              var max = 0;
-              for (var i = 0, len = option.list.length; i < len; i++) {
-                if (min > option.list[i][1]) {
-                  min = option.list[i][1];
+                  _this._wrapper.style.cursor = 'default';
                 }
-                if (max < option.list[i][1]) {
-                  max = option.list[i][1];
+                __originHoverCb && __originHoverCb(item, dimension, event);
+              };
+              if (option.tooltip && option.tooltip.show === true) {
+                if (!this._tooltip) {
+                  this._tooltip = window.document.createElement('div');
+                  this._tooltip.className = "__wc_tooltip__";
+                  this._tooltip.style.backgroundColor = option.tooltip.backgroundColor || 'rgba(0, 0, 0, 0.701961)';
+                  this._tooltip.style.color = '#fff';
+                  this._tooltip.style.padding = '5px';
+                  this._tooltip.style.borderRadius = '5px';
+                  this._tooltip.style.fontSize = '12px';
+                  // FIXME
+                  //this._tooltip.style.fontFamily = option.fontFamily || this._option.fontFamily;
+                  if (typeof option.fontFamily === 'function') {
+                    console.log("option.fontFamily is a function!");
+                    this._tooltip.style.fontFamily = option.fontFamily;
+                  } else if (typeof option.fontFamily === 'string') {
+                    console.log("option.fontFamily is a string!");
+                    this._tooltip.style.fontFamily = option.fontFamily;
+                  } else {
+                    this._tooltip.style.fontFamily = this._option.fontFamily
+                  }
+                  this._tooltip.style.lineHeight = 1.4;
+                  this._tooltip.style.webkitTransition = 'left 0.2s, top 0.2s';
+                  this._tooltip.style.mozTransition = 'left 0.2s, top 0.2s';
+                  this._tooltip.style.transition = 'left 0.2s, top 0.2s';
+                  this._tooltip.style.position = 'absolute';
+                  this._tooltip.style.whiteSpace = 'nowrap';
+                  this._tooltip.style.zIndex = 999;
+                  this._tooltip.style.display = 'none';
+                  this._wrapper.appendChild(this._tooltip);
+                  this._container.onmouseout = function() {
+                    _this._tooltip.style.display = 'none';
+                  };
                 }
+                this._option.hover = hoverCb;
               }
+              _sortWorldCloud(this._option);
 
-              //用y=ax^r+b公式确定字体大小
-              if (max > min) {
-                var r = typeof option.fontSizeFactor === 'number' ? option.fontSizeFactor : 1 / 10;
-                var a = (option.maxFontSize - option.minFontSize) / (Math.pow(max, r) - Math.pow(min, r));
-                var b = option.maxFontSize - a * Math.pow(max, r);
-                // var x = (option.maxFontSize - option.minFontSize) / (1 - min / max)
-                // var y = option.maxFontSize - x
-                option.weightFactor = function(size) {
-                  return Math.ceil(a * Math.pow(size, r) + b);
-                  // var s = Math.ceil((size / max) * x + y)
-                  // return s
-                };
+              if (this._option && /\.(jpg|png)$/.test(this._option.imageShape)) {
+                _imageShape.call(this, this._option);
+              } else if (this._option.shape === 'circle') {
+                _circle.call(this, this._option);
               } else {
-                option.weightFactor = function(size) {
-                  return option.minFontSize;
-                };
+                _renderShape.call(this, this._option);
               }
             }
-          }
-        }, {
-          key: '_showMask',
-          value: function _showMask(innerHTML) {
-            if (this._dataMask) {
-              this._dataMask.innerHTML = innerHTML;
-              if (innerHTML === '') {
+            /**
+             * 事件绑定
+             * @todo
+             */
+
+          }, {
+            key: 'on',
+            value: function on() {}
+          }, {
+            key: 'showLoading',
+            value: function showLoading(loadingOption) {
+              var loadingTxt;
+              var DEFAULT_LOADING_TEXT = '正在加载...';
+              var LOADING_LOGO_HTML = '<div class="__wc_loading__">' + '<div></div>' + '<div></div>' + '<div></div>' + '<div></div>' + '<div></div>' + '<div></div>' + '<div></div>' + '<div></div>' + '</div>';
+              if (loadingOption) {
+                if (loadingOption.backgroundColor) {
+                  this._dataMask.style.backgroundColor = loadingOption.backgroundColor;
+                }
+                loadingTxt = loadingOption.text === undefined ? DEFAULT_LOADING_TEXT : loadingOption.text;
+                if (loadingOption.effect === 'spin') {
+                  this._showMask(LODAING_WRAPPTER_HTML_PRE + LOADING_LOGO_HTML + loadingTxt + LODAING_WRAPPTER_HTML_END);
+                  var dom = this._dataMask.childNodes[0].childNodes[0];
+                  var paddingLeft = dom.style.paddingLeft;
+                  dom.style.paddingLeft = parseInt(paddingLeft) + 45 + 'px';
+                } else {
+                  this._showMask(LODAING_WRAPPTER_HTML_PRE + loadingTxt + LODAING_WRAPPTER_HTML_END);
+                }
+              } else {
+                this._showMask(LODAING_WRAPPTER_HTML_PRE + LOADING_LOGO_HTML + DEFAULT_LOADING_TEXT + LODAING_WRAPPTER_HTML_END);
+              }
+            }
+          }, {
+            key: 'hideLoading',
+            value: function hideLoading() {
+              if (this._dataMask) {
                 this._dataMask.style.display = 'none';
-              } else {
-                this._dataMask.style.display = 'block';
               }
             }
+          }, {
+            key: 'resize',
+            value: function resize() {
+              this._canvas.width = this._container.clientWidth;
+              this._canvas.height = this._container.clientHeight;
+              _renderShape.call(this, this._option);
+              // this._wordcloud2 = WordCloud(this._canvas, this._option)
+            }
+          }, {
+            key: '_init',
+            value: function _init() {
+              var width = this._container.clientWidth;
+              var height = this._container.clientHeight;
+              this._container.innerHTML = '';
+
+              this._wrapper = window.document.createElement('div');
+              this._wrapper.style.position = 'relative';
+              this._wrapper.style.width = '100%';
+              this._wrapper.style.height = 'inherit';
+
+              this._dataMask = window.document.createElement('div');
+              this._dataMask.height = 'inherit';
+              this._dataMask.style.textAlign = 'center';
+              this._dataMask.style.color = '#888';
+              this._dataMask.style.fontSize = '14px';
+              this._dataMask.style.position = 'absolute';
+              this._dataMask.style.left = '0';
+              this._dataMask.style.right = '0';
+              this._dataMask.style.top = '0';
+              this._dataMask.style.bottom = '0';
+              this._dataMask.style.display = 'none';
+
+              this._wrapper.appendChild(this._dataMask);
+              this._container.appendChild(this._wrapper);
+
+              this._canvas = window.document.createElement('canvas');
+              this._canvas.width = width;
+              this._canvas.height = height;
+              this._wrapper.appendChild(this._canvas);
+            }
+          }, {
+            key: '_fixWeightFactor',
+            value: function _fixWeightFactor(option) {
+              option.maxFontSize = typeof option.maxFontSize === 'number' ? option.maxFontSize : 60;
+              option.minFontSize = typeof option.minFontSize === 'number' ? option.minFontSize : 12;
+              if (option.list && option.list.length > 0) {
+                var min = option.list[0][1];
+                var max = 0;
+                for (var i = 0, len = option.list.length; i < len; i++) {
+                  if (min > option.list[i][1]) {
+                    min = option.list[i][1];
+                  }
+                  if (max < option.list[i][1]) {
+                    max = option.list[i][1];
+                  }
+                }
+
+                if (max > min) {
+                  var r = typeof option.fontSizeFactor === 'number' ? option.fontSizeFactor : 1 / 10;
+                  var a = (option.maxFontSize - option.minFontSize) / (Math.pow(max, r) - Math.pow(min, r));
+                  var b = option.maxFontSize - a * Math.pow(max, r);
+                  // var x = (option.maxFontSize - option.minFontSize) / (1 - min / max)
+                  // var y = option.maxFontSize - x
+                  option.weightFactor = function(size) {
+                    return Math.ceil(a * Math.pow(size, r) + b);
+                    // var s = Math.ceil((size / max) * x + y)
+                    // return s
+                  };
+                } else {
+                  option.weightFactor = function(size) {
+                    return option.minFontSize;
+                  };
+                }
+              }
+            }
+          },
+          {
+            key: '_fixFontWeight',
+            value: function _fixFontWeight(option) {
+              //option.fontWeight = typeof option.fontWeight === 'string' ? option.fontWeight : 'bold';
+              // var fontWeight;
+              // if (option.textStyle && option.textStyle.fontWeight) {
+              //   for (var i = 0, len = option.textStyle.fontWeight.length; i < len; i++) {
+              //     fontWeight = option.textStyle.fontWeight[i];
+              //     return fontWeight;
+              //   }
+              // }
+            }
+          },
+          {
+            key: '_fixFontFamily',
+            value: function _fixFontFamily(option) {
+              //option.fontWeight = typeof option.fontWeight === 'string' ? option.fontWeight : 'bold';
+              // var fontFamily;
+              // if (option.textStyle.fontFamily) {
+              //   for (var i = 0, len = option.textStyle.fontFamily.length; i < len; i++) {
+              //     fontFamily = option.textStyle.fontFamily[i];
+              //     return fontFamily;
+              //   }
+              // }
+            }
+          },
+          {
+            key: '_showMask',
+            value: function _showMask(innerHTML) {
+              if (this._dataMask) {
+                this._dataMask.innerHTML = innerHTML;
+                if (innerHTML === '') {
+                  this._dataMask.style.display = 'none';
+                } else {
+                  this._dataMask.style.display = 'block';
+                }
+              }
+            }
+          },
+          {
+            key: '_dataEmpty',
+            value: function _dataEmpty() {
+              return !this._option || !this._option.list || this._option.list.length <= 0;
+            }
           }
-        }, {
-          key: '_dataEmpty',
-          value: function _dataEmpty() {
-            return !this._option || !this._option.list || this._option.list.length <= 0;
-          }
-        }]);
+        ]);
 
         return Js2WordCloud;
       }();
@@ -831,21 +883,20 @@
                 break;
             }
             var getFontWeight;
-            switch (settings.fontWeight) {
-              default: if (typeof settings.fontWeight === 'function') {
-                getFontWeight = settings.fontWeight;
-              }
-              break;
+            if (typeof settings.fontWeight === 'function') {
+              getFontWeight = settings.fontWeight;
+            } else if (typeof settings.fontWeight === 'string') {
+              console.log("hola fontWeight: " + settings.fontWeight);
+              getFontWeight = settings.fontWeight;
             }
 
             var getFontFamily;
-            switch (settings.fontFamily) {
-              default: if (typeof settings.fontFamily === 'function') {
-                getFontFamily = settings.fontFamily;
-              }
-              break;
+            if (typeof settings.fontFamily === 'function') {
+              getFontFamily = settings.fontFamily;
+            } else if (typeof settings.fontFamily === 'string') {
+              console.log("hola fontFamily: " + settings.fontFamily);
+              getFontFamily = settings.fontFamily;
             }
-
 
             /* function for getting the classes of the text */
             var getTextClasses = null;
@@ -962,7 +1013,7 @@
               return minRotation + Math.random() * rotationRange;
             };
             //FIXME agrego como parámetro fontWeight y fontFamily
-            var getTextInfo = function getTextInfo(word, weight, rotateDeg, fontWeight, fontFamily) {
+            var getTextInfo = function getTextInfo(word, weight, rotateDeg, getFontWeight, getFontFamily) {
               // calculate the acutal font size
               // fontSize === 0 means weightFactor function wants the text skipped,
               // and size < minSize means we cannot draw the text.
@@ -990,9 +1041,9 @@
               var fctx = fcanvas.getContext('2d', {
                 willReadFrequently: true
               });
-
-              fctx.font = settings.fontWeight + ' ' + (fontSize * mu).toString(10) + 'px ' + settings.fontFamily;
-
+              //FIXME
+              //fctx.font = settings.fontWeight + ' ' + (fontSize * mu).toString(10) + 'px ' + settings.fontFamily;
+              fctx.font = getFontWeight + ' ' + (fontSize * mu).toString(10) + 'px ' + getFontFamily;
               // Estimate the dimension of the text with measureText().
               var fw = fctx.measureText(word).width / mu;
               var fh = Math.max(fontSize * mu, fctx.measureText('m').width, fctx.measureText('\uFF37').width) / mu;
@@ -1039,8 +1090,10 @@
 
               // Once the width/height is set, ctx info will be reset.
               // Set it again here.
-              fctx.font = settings.fontWeight + ' ' + (fontSize * mu).toString(10) + 'px ' + settings.fontFamily;
-
+              //FIXME
+              //fctx.font = settings.fontWeight + ' ' + (fontSize * mu).toString(10) + 'px ' + settings.fontFamily;
+              fctx.font = getFontWeight + ' ' + (fontSize * mu).toString(10) + 'px ' + getFontFamily;
+              console.log(getFontWeight + ' ' + (fontSize * mu).toString(10) + 'px ' + getFontFamily);
               // Fill the text into the fcanvas.
               // XXX: We cannot because textBaseline = 'top' here because
               // Firefox and Chrome uses different default line-height for canvas.
@@ -1127,7 +1180,9 @@
                 fillTextOffsetY: fillTextOffsetY,
                 fillTextWidth: fw,
                 fillTextHeight: fh,
-                fontSize: fontSize
+                fontSize: fontSize,
+                fontWeight: getFontWeight,
+                fontFamily: getFontFamily
               };
             };
 
@@ -1339,7 +1394,7 @@
               var rotateDeg = getRotateDeg();
 
               // get info needed to put the text onto the canvas
-              var info = getTextInfo(word, weight, rotateDeg);
+              var info = getTextInfo(word, weight, rotateDeg, getFontWeight, getFontFamily);
 
               // not getting the info means we shouldn't be drawing this one.
               if (!info) {

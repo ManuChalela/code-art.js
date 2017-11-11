@@ -26,6 +26,9 @@ var externalsTotal = [];
 var variablesTotal = [];
 var variablesGlobal = [];
 var size = 0;
+var FinalList = [];
+var min = Number.MAX_VALUE;
+var max = Number.MIN_VALUE;
 estraverse.traverse(ast, {
   enter: enter,
   leave: leave
@@ -612,6 +615,33 @@ function printLeave(graph) {
     } else {
       console.log("externalsTotal empty.");
     }
+    if (variablesGlobal.length > 0 && externalsTotal.length > 0) {
+      finalList = variablesGlobal;
+      finalList = finalList.concat(externalsTotal);
+      console.log("FinalList: ");
+      console.log(JSON.stringify(finalList));
+    } else if (variablesGlobal.length > 0) {
+      finalList = variablesGlobal;
+      console.log("FinalList: ");
+      console.log(JSON.stringify(finalList));
+    } else if (externalsTotal.length > 0) {
+      finalList = externalsTotal;
+      console.log("FinalList: ");
+      console.log(JSON.stringify(finalList));
+    } else {
+      console.log("Error with finalList!");
+    }
+    // var min = Number.MAX_VALUE;
+    // var max = Number.MIN_VALUE;
+    for (var i = 0; i < finalList.length; i++) {
+      if (finalList[i].count < min)
+        min = finalList[i].count;
+      if (finalList[i].count > max)
+        max = finalList[i].count;
+    }
+    console.log("Min: " + min);
+    console.log("Max: " + max);
+    console.log("Length: " + finalList.length);
   } else {
     console.log("Graph empty.");
   }
@@ -769,3 +799,39 @@ function getRandomWeight() {
   var weightList = ["normal", "bold", "italic"];
   return weightList[Math.floor(Math.random() * weightList.length)];
 }
+
+
+// Converts a #ffffff hex string into an [r,g,b] array
+var h2r = function(hex) {
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? [
+    parseInt(result[1], 16),
+    parseInt(result[2], 16),
+    parseInt(result[3], 16)
+  ] : null;
+};
+
+// Inverse of the above
+var r2h = function(rgb) {
+  return "#" + ((1 << 24) + (rgb[0] << 16) + (rgb[1] << 8) + rgb[2]).toString(16).slice(1);
+};
+
+// Interpolates two [r,g,b] colors and returns an [r,g,b] of the result
+// Taken from the awesome ROT.js roguelike dev library at
+// https://github.com/ondras/rot.js
+var color1 = "#0000FF";
+var color2 = "#FF0000";
+var factor = 20;
+var _interpolateColor = function(color1, color2, factor) {
+  if (arguments.length < 3) {
+    factor = 0.5;
+  }
+  var result = color1.slice();
+  for (var i = 0; i < 3; i++) {
+    result[i] = Math.round(result[i] + factor * (color2[i] - color1[i]));
+  }
+  console.log(result);
+  return result;
+};
+
+console.log("Color interpolado es: " + _interpolateColor(color1, color2, factor));
