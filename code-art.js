@@ -644,7 +644,7 @@ function printLeave(graph) {
     console.log("Min: " + min);
     console.log("Max: " + max);
     console.log("Length: " + finalList.length);
-    setColorByCount(finalList, min, max);
+    finalList = setColorByCount(finalList, min, max);
 
     var itemFinalListJS = [];
     for (var i = 0; i < finalList.length; i++) {
@@ -668,6 +668,7 @@ function setColorByCount(finalList, min, max) {
     var start = "#0000FF";
     var end = "#FF0000";
     for (var i = 0; i < finalList.length; i++) {
+      console.log(finalList[i].count);
       switch (finalList[i].count) {
         case min:
           finalList[i].color = start;

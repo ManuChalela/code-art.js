@@ -36,15 +36,11 @@ $("#get-wordcloud").on("click", function() {
           backgroundColor: '#eee',
           text: '',
           textStyle: {
-            //color: '#f00',
             color: function(item) {
-              //console.log(item);
               for (var i = 0; i < list.length; i++) {
                 var array = list[i];
                 for (var j = 0; j < array.length; j++) {
                   if (array[j] == item) {
-                    //    console.log(array[2]);
-                    //return '\'' + array[2] + '\'';
                     return array[2];
                   }
                 }
@@ -58,7 +54,6 @@ $("#get-wordcloud").on("click", function() {
                 for (var j = 0; j < array.length; j++) {
                   if (array[j] == item) {
                     if (array[4]) {
-                      //return '\'' + array[4] + " " + '\'';
                       fontWeightList.push('\'' + array[4] + " " + '\'');
                     } else {
                       console.log("Error en fontWeight!");
@@ -73,7 +68,6 @@ $("#get-wordcloud").on("click", function() {
                 var array = list[i];
                 for (var j = 0; j < array.length; j++) {
                   if (array[j] == item) {
-                    //return '\'' + array[2] + '\'';
                     return '\'' + array[3] + '\'';
                   }
                 }
@@ -102,15 +96,11 @@ $("#get-wordcloud").on("click", function() {
           }
         },
         list: list,
-        //  color: '#15a4fa',
         color: function(item) {
-          //console.log(item);
           for (var i = 0; i < list.length; i++) {
             var array = list[i];
             for (var j = 0; j < array.length; j++) {
               if (array[j] == item) {
-                //    console.log(array[2]);
-                //return '\'' + array[2] + '\'';
                 return array[2];
               }
             }
