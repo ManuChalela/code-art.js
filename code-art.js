@@ -253,9 +253,12 @@ function ItemExternalTotal(name, count) {
   this.count = count;
 }
 
-function ItemVariableTotal(name, count) {
+function ItemVariableTotal(name, count, color, fontFamily, fontWeight) {
   this.name = name;
   this.count = count;
+  this.color = color;
+  this.fontFamily = fontFamily;
+  this.fontWeight = fontWeight;
 }
 
 function findById(source, id) {
@@ -351,9 +354,12 @@ function addVarToItemFunction(nameItemFunction, nameVariable, type, functionList
 
 function checkVariablesTotal(listVariables, varname) {
   if (varname) {
+    var color = getRandomColor();
+    var fontFamily = getRandomFontFamily();
+    var fontWeight = getRandomWeight();
     var indiceVariablesTotal = arrayObjectIndexOf(listVariables, varname, "name");
     if (indiceVariablesTotal == -1) {
-      var itemVariablesTotal = new ItemVariableTotal(varname, 1);
+      var itemVariablesTotal = new ItemVariableTotal(varname, 1, color, fontFamily, fontWeight);
       listVariables.push(itemVariablesTotal);
     } else {
       listVariables[indiceVariablesTotal].count = listVariables[indiceVariablesTotal].count + 1;
@@ -511,15 +517,11 @@ function printLeave(graph) {
     }
     for (var i = 0; i < functionList.length; i++) {
       var itemList = [];
-      if (functionList[i].size === 1)
-        //  itemList.push(functionList[i].name, functionList[i].size);
-        //itemList.push(functionList[i].name, 0.1, "#15a4fa", "sans-serif");
-        //itemList.push(functionList[i].name, 0.1, getColorNotRed(), "sans-serif");
-        itemList.push(functionList[i].name, 0.1, functionList[i].color, functionList[i].fontFamily, functionList[i].fontWeight);
-      else
-        //itemList.push(functionList[i].name, Math.log(functionList[i].size), "#15a4fa", "sans-serif");
-        //itemList.push(functionList[i].name, Math.log(functionList[i].size), getColorNotRed(), "sans-serif");
-        itemList.push(functionList[i].name, Math.log(functionList[i].size), functionList[i].color, functionList[i].fontFamily, functionList[i].fontWeight);
+      // if (functionList[i].size === 1)
+      //   itemList.push(functionList[i].name, 0.1, functionList[i].color, functionList[i].fontFamily, functionList[i].fontWeight);
+      // else
+      //   itemList.push(functionList[i].name, Math.log(functionList[i].size), functionList[i].color, functionList[i].fontFamily, functionList[i].fontWeight);
+      itemList.push(functionList[i].name, 2 + Math.log(functionList[i].size), functionList[i].color, functionList[i].fontFamily, functionList[i].fontWeight);
       itemListJS.push(JSON.stringify(itemList));
 
       // Agrego las globales de cada function a variablesGlobal
@@ -532,11 +534,12 @@ function printLeave(graph) {
     // Agrego los globals a la WordCloud
     variablesGlobal.forEach(function(varGlobal) {
       var itemList = [];
-      if (varGlobal.count === 1)
-        //itemList.push(varGlobal.name, varGlobal.count);
-        itemList.push(varGlobal.name, 0.1, "#FF0000", "courier");
-      else
-        itemList.push(varGlobal.name, Math.log(varGlobal.count), "#FF0000", "courier");
+      // if (varGlobal.count === 1)
+      //   //itemList.push(varGlobal.name, varGlobal.count);
+      //   itemList.push(varGlobal.name, 0.1, "#FF0000", "courier");
+      // else
+      //   itemList.push(varGlobal.name, Math.log(varGlobal.count), "#FF0000", "courier");
+      itemList.push(varGlobal.name, 2 + Math.log(varGlobal.count), varGlobal.color, varGlobal.fontFamily, varGlobal.fontWeight);
       itemListJS.push(JSON.stringify(itemList));
     });
 
@@ -631,8 +634,6 @@ function printLeave(graph) {
     } else {
       console.log("Error with finalList!");
     }
-    // var min = Number.MAX_VALUE;
-    // var max = Number.MIN_VALUE;
     for (var i = 0; i < finalList.length; i++) {
       if (finalList[i].count < min)
         min = finalList[i].count;
