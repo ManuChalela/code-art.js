@@ -663,29 +663,31 @@ function printLeave(graph) {
   }
 }
 
-function setColorByCount(finalList, min, max) {
-  if (finalList.length > 0 && min > 0 && max > 0) {
+function setColorByCount(list, min, max) {
+  if (list.length > 0 && min > 0 && max > 0) {
     var start = "#0000FF";
     var end = "#FF0000";
-    for (var i = 0; i < finalList.length; i++) {
-      console.log(finalList[i].count);
-      switch (finalList[i].count) {
+    for (var i = 0; i < list.length; i++) {
+      console.log("Count: " + list[i].count);
+
+      switch (list[i].count) {
         case min:
-          finalList[i].color = start;
+          list[i].color = start;
           break;
         case max:
-          finalList[i].color = end;
-          console.log("entro al max: " + finalList[i].name + " " + finalList[i].color);
-          console.log("min: " + min);
-          console.log("max: " + max);
+          list[i].color = end;
+          //console.log("entro al max: " + list[i].name + " " + list[i].color);
+          //console.log("min: " + min);
+          //console.log("max: " + max);
         default:
-          finalList[i].color = interpoolateColor(start, end, 0.5);
+          list[i].color = interpoolateColor(start, end, 0.5);
           break;
       }
+      console.log("Color: " + list[i].color);
     }
     console.log("FinalList: ");
-    console.log(JSON.stringify(finalList));
-    return finalList;
+    console.log(JSON.stringify(list));
+    return list;
   }
 }
 
