@@ -518,15 +518,14 @@ function printLeave(graph) {
     }
     for (var i = 0; i < functionList.length; i++) {
       var itemList = [];
-      // if (functionList[i].size === 1)
-      //   itemList.push(functionList[i].name, 0.1, functionList[i].color, functionList[i].fontFamily, functionList[i].fontWeight);
-      // else
-      //   itemList.push(functionList[i].name, Math.log(functionList[i].size), functionList[i].color, functionList[i].fontFamily, functionList[i].fontWeight);
-      var size = Math.round(Math.log(functionList[i].size) * 100) / 100;
-      itemList.push(functionList[i].name, 2 + size, functionList[i].color, functionList[i].fontFamily, functionList[i].fontWeight);
+      itemList.push(functionList[i].name, 2 + Math.round(Math.log(functionList[i].size) * 100) / 100, functionList[i].color, functionList[i].fontFamily, functionList[i].fontWeight);
+      //itemList.push(functionList[i].name, functionList[i].size, functionList[i].color, functionList[i].fontFamily, functionList[i].fontWeight);
+
       itemListJS.push(JSON.stringify(itemList));
       var item = functionList[i];
       var itemVariableTotal = new ItemVariableTotal(item.name, 2 + Math.round(Math.log(item.size) * 100) / 100, item.color, item.fontFamily, item.fontWeight);
+      //var itemVariableTotal = new ItemVariableTotal(item.name, item.size, item.color, item.fontFamily, item.fontWeight);
+
       FunctionDefTotal.push(itemVariableTotal);
 
       // Agrego las globales de cada function a variablesGlobal
@@ -539,13 +538,8 @@ function printLeave(graph) {
     // Agrego los globals a la WordCloud
     variablesGlobal.forEach(function(varGlobal) {
       var itemList = [];
-      // if (varGlobal.count === 1)
-      //   //itemList.push(varGlobal.name, varGlobal.count);
-      //   itemList.push(varGlobal.name, 0.1, "#FF0000", "courier");
-      // else
-      //   itemList.push(varGlobal.name, Math.log(varGlobal.count), "#FF0000", "courier");
-
       itemList.push(varGlobal.name, 2 + Math.round(Math.log(varGlobal.count) * 100) / 100, varGlobal.color, varGlobal.fontFamily, varGlobal.fontWeight);
+      //itemList.push(varGlobal.name, varGlobal.count, varGlobal.color, varGlobal.fontFamily, varGlobal.fontWeight);
       itemListJS.push(JSON.stringify(itemList));
     });
 
@@ -585,11 +579,19 @@ function printLeave(graph) {
       edgesJS.push(JSON.stringify(itemListET));
 
       var itemListLog = [];
-      if (externalsTotal[i].count == 1) {
-        itemListLog.push(externalsTotal[i].name, externalsTotal[i].count);
-      } else {
-        itemListLog.push(externalsTotal[i].name, Math.log(externalsTotal[i].count));
-      }
+      // if (externalsTotal[i].count == 1) {
+      //   itemListLog.push(externalsTotal[i].name, externalsTotal[i].count);
+      // } else {
+      //   //itemListLog.push(externalsTotal[i].name, Math.log(externalsTotal[i].count));
+      //   itemListLog.push(externalsTotal[i].name, externalsTotal[i].count);
+      // }
+      // if (externalsTotal[i].count == 1) {
+      //   itemListLog.push(externalsTotal[i].name, externalsTotal[i].count);
+      // } else {
+      //   //itemListLog.push(externalsTotal[i].name, Math.log(externalsTotal[i].count));
+      //   itemListLog.push(externalsTotal[i].name, externalsTotal[i].count);
+      // }
+      itemListLog.push(externalsTotal[i].name, 2 + Math.round(Math.log(externalsTotal[i].count)));
       edgesLogJS.push(JSON.stringify(itemListLog));
     }
     var edgesETJS = "[" + edgesJS + "]";
@@ -602,26 +604,26 @@ function printLeave(graph) {
       if (err) throw err;
     });
     if (variablesTotalSimple.length > 0) {
-      console.log("VariablesTotalSimple: ");
-      console.log(JSON.stringify(variablesTotalSimple));
+      //console.log("VariablesTotalSimple: ");
+      //console.log(JSON.stringify(variablesTotalSimple));
     } else {
       console.log("variablesTotalSimple empty.");
     }
     if (variablesTotal.length > 0) {
-      console.log("variablesTotal: ");
-      console.log(JSON.stringify(variablesTotal));
+      //  console.log("variablesTotal: ");
+      //console.log(JSON.stringify(variablesTotal));
     } else {
       console.log("variablesTotal empty.");
     }
     if (variablesGlobal.length > 0) {
-      console.log("VariablesGlobal: ");
-      console.log(JSON.stringify(variablesGlobal));
+      //console.log("VariablesGlobal: ");
+      //console.log(JSON.stringify(variablesGlobal));
     } else {
       console.log("variablesGlobal empty.");
     }
     if (externalsTotal.length > 0) {
-      console.log("ExternalTotal: ");
-      console.log(JSON.stringify(externalsTotal));
+      //console.log("ExternalTotal: ");
+      //console.log(JSON.stringify(externalsTotal));
     } else {
       console.log("externalsTotal empty.");
     }
@@ -644,14 +646,21 @@ function printLeave(graph) {
     console.log("Min: " + min);
     console.log("Max: " + max);
     console.log("Length: " + finalList.length);
-    finalList = setColorByCount(finalList, min, max);
-
+    if (min > 0 && max > 0) {
+      if (min < max)
+        var finalListColored = setColorByCount(finalList, min, max, (max - min) / 2); // 0.5
+      else if (min == max)
+        var finalListColored = setColorByCount(finalList, min, min, 1);
+    } else {
+      console.log("Error with min and max!");
+    }
     var itemFinalListJS = [];
-    for (var i = 0; i < finalList.length; i++) {
+    for (var i = 0; i < finalListColored.length; i++) {
       var itemList = [];
-      var size = Math.round(Math.log(finalList[i].count) * 100) / 100;
-      itemList.push(finalList[i].name, 2 + size, finalList[i].color, finalList[i].fontFamily, finalList[i].fontWeight);
-      console.log(itemList);
+
+      //var size = Math.round(Math.log(finalListColored[i].count) * 100) / 100;
+      itemList.push(finalListColored[i].name, finalListColored[i].count, finalListColored[i].color, finalListColored[i].fontFamily, finalListColored[i].fontWeight);
+      //console.log(itemList);
       itemFinalListJS.push(JSON.stringify(itemList));
     }
     itemFinalListJS = "[" + itemFinalListJS + "]";
@@ -663,27 +672,19 @@ function printLeave(graph) {
   }
 }
 
-function setColorByCount(list, min, max) {
+function setColorByCount(list, min, max, factor) {
   if (list.length > 0 && min > 0 && max > 0) {
     var start = "#0000FF";
     var end = "#FF0000";
     for (var i = 0; i < list.length; i++) {
-      console.log("Count: " + list[i].count);
+      if (list[i].count == min)
+        list[i].color = start;
+      else if (list[i].count == max)
+        list[i].color = end;
+      else
+        list[i].color = interpoolateColor(start, end, factor);
+      console.log("Count: " + list[i].count + " Color: " + list[i].color);
 
-      switch (list[i].count) {
-        case min:
-          list[i].color = start;
-          break;
-        case max:
-          list[i].color = end;
-          //console.log("entro al max: " + list[i].name + " " + list[i].color);
-          //console.log("min: " + min);
-          //console.log("max: " + max);
-        default:
-          list[i].color = interpoolateColor(start, end, 0.5);
-          break;
-      }
-      console.log("Color: " + list[i].color);
     }
     console.log("FinalList: ");
     console.log(JSON.stringify(list));

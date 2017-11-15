@@ -74,7 +74,7 @@ $("#get-wordcloud").on("click", function() {
               }
               console.log(item);
             },
-            fontSize: 2
+            fontSize: 1
           }
         }
       }
@@ -150,46 +150,46 @@ $("#get-wordcloud").on("click", function() {
     }
   });
 });
-$("#get-own-wordcloud").on("click", function() {
-  $.get('/getWordCloud', function(list) {
-    var ownWordcloud = document.getElementById('ownWordcloud');
-    if (list) {
-      var ctx = ownWordcloud.getContext("2d");
-      var dataURL = ownWordcloud.toDataURL();
-      document.getElementById('ownWordcloud').src = dataURL;
-      for (var i = 0; i < list.length; i++) {
-        var array = list[i];
-        var fontSize = 2;
-        var minFontSize = 1;
-        // Scale factor here is to make sure fillText is not limited by
-        // the minium font size set by browser.
-        // It will always be 1 or 2n.
-        var mu = 1;
-        if (fontSize < minFontSize) {
-          mu = function calculateScaleFactor() {
-            var mu = 2;
-            while (mu * fontSize < minFontSize) {
-              mu += 2;
-            }
-            return mu;
-          }();
-        }
-        ctx.font = array[1] + ' ' + (fontSize * mu).toString(10) + 'px ' + array[3];
-        ctx.fillStyle = array[2];
-        ctx.fillText(array[0], i, i * 20);
-      }
-      // ctx.font = "20px " + list[0][3];
-      // ctx.fillStyle = list[0][2];
-      // ctx.fillText(list[0][0], 10, 10);
-      //
-      // ctx.font = "20px " + list[1][3];
-      // ctx.fillStyle = list[1][2];
-      // ctx.fillText(list[1][0], 10, 30);
-    } else {
-      ownWordcloud.innerHTML = "Unable to construct your own wordcloud.";
-    }
-  });
-});
+// $("#get-own-wordcloud").on("click", function() {
+//   $.get('/getWordCloud', function(list) {
+//     var ownWordcloud = document.getElementById('ownWordcloud');
+//     if (list) {
+//       var ctx = ownWordcloud.getContext("2d");
+//       var dataURL = ownWordcloud.toDataURL();
+//       document.getElementById('ownWordcloud').src = dataURL;
+//       for (var i = 0; i < list.length; i++) {
+//         var array = list[i];
+//         var fontSize = 2;
+//         var minFontSize = 1;
+//         // Scale factor here is to make sure fillText is not limited by
+//         // the minium font size set by browser.
+//         // It will always be 1 or 2n.
+//         var mu = 1;
+//         if (fontSize < minFontSize) {
+//           mu = function calculateScaleFactor() {
+//             var mu = 2;
+//             while (mu * fontSize < minFontSize) {
+//               mu += 2;
+//             }
+//             return mu;
+//           }();
+//         }
+//         ctx.font = array[1] + ' ' + (fontSize * mu).toString(10) + 'px ' + array[3];
+//         ctx.fillStyle = array[2];
+//         ctx.fillText(array[0], i, i * 20);
+//       }
+//       // ctx.font = "20px " + list[0][3];
+//       // ctx.fillStyle = list[0][2];
+//       // ctx.fillText(list[0][0], 10, 10);
+//       //
+//       // ctx.font = "20px " + list[1][3];
+//       // ctx.fillStyle = list[1][2];
+//       // ctx.fillText(list[1][0], 10, 30);
+//     } else {
+//       ownWordcloud.innerHTML = "Unable to construct your own wordcloud.";
+//     }
+//   });
+// });
 
 $("#save-nodes").on("click", function() {
   $.get('/saveGraph', function(graphGlobal) {
