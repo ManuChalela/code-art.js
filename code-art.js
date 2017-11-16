@@ -865,12 +865,13 @@ function interpolateColor(start, end, count) {
 
 
 function interpolateRGBColor(min, max, count) {
-  if (count > 0 && min > 0 && max > 0) {
+  var normalized = (count - min) / (max - min);
+  if (count > 0 && min > 0 && max > 0 && max > min) {
     if (count == min)
       return "rgb(0,0,255)";
     else if (count == max)
       return "rgb(255,0,0)";
-    else return "rgb(" + Math.floor(255 - (count / max * 255)) + ", 0, " + Math.floor(255 - (min / count * 255)) + ")";
+    else return "rgb(" + Math.floor(normalized * 255) + ", 0, " + Math.floor((1 - normalized) * 255) + ")";
   } else console.log("Error with interpolateRGBColor!");
 }
 
