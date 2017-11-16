@@ -682,9 +682,9 @@ function setColorByCount(list, min, max, factor) {
       else if (list[i].count == max)
         list[i].color = end;
       else
-        list[i].color = interpoolateColor(start, end, factor);
+        //list[i].color = interpolateColor(start, end, factor);
+        list[i].color = interpolateRGBColor(min, max, list[i].count);
       console.log("Count: " + list[i].count + " Color: " + list[i].color);
-
     }
     console.log("FinalList: ");
     console.log(JSON.stringify(list));
@@ -846,7 +846,7 @@ function getRandomWeight() {
   return weightList[Math.floor(Math.random() * weightList.length)];
 }
 
-function interpoolateColor(start, end, count) {
+function interpolateColor(start, end, count) {
 
   var ah = parseInt(start.replace(/#/g, ''), 16),
     ar = ah >> 16,
@@ -861,4 +861,15 @@ function interpoolateColor(start, end, count) {
     rb = ab + count * (bb - ab);
 
   return '#' + ((1 << 24) + (rr << 16) + (rg << 8) + rb | 0).toString(16).slice(1);
+}
+
+
+function interpolateRGBColor(min, max, count) {
+  if (count > 0 && min > 0 && max > 0) {
+    if (count == min)
+      return "rgb(0,0,255)";
+    else if (count == max)
+      return "rgb(255,0,0)";
+    else return "rgb(" + Math.floor(255 - (count / max * 255)) + ", 0, " + Math.floor(255 - (min / count * 255)) + ")";
+  } else console.log("Error with interpolateRGBColor!");
 }
