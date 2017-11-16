@@ -682,8 +682,8 @@ function setColorByCount(list, min, max, factor) {
       else if (list[i].count == max)
         list[i].color = end;
       else
-        //list[i].color = interpolateColor(start, end, factor);
         list[i].color = interpolateRGBColor(min, max, list[i].count);
+      //list[i].color = rgb2hex(interpolateRGBColor(min, max, list[i].count));
       console.log("Count: " + list[i].count + " Color: " + list[i].color);
     }
     console.log("FinalList: ");
@@ -873,3 +873,11 @@ function interpolateRGBColor(min, max, count) {
     else return "rgb(" + Math.floor(255 - (count / max * 255)) + ", 0, " + Math.floor(255 - (min / count * 255)) + ")";
   } else console.log("Error with interpolateRGBColor!");
 }
+
+function rgb2hex(rgb) {
+  var rgbArray = rgb.split(',');
+  var r = parseInt(rgbArray[0].substring(4)); // skip rgb(
+  var g = parseInt(rgbArray[1]);
+  var b = parseInt(rgbArray[2]);
+  return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+};
