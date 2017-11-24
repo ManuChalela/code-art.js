@@ -16,11 +16,6 @@ $("#get-nodes").on("click", function() {
         edges: {
           width: 2,
           shadow: true
-        },
-        physics: {
-          maxVelocity: 50,
-          minVelocity: 0.5
-          //,          solver: "hierarchicalRepulsion"
         }
       };
       network = new vis.Network(container, graph, options);
