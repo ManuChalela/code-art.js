@@ -8,7 +8,8 @@ $("#get-nodes").on("click", function() {
           shape: 'dot',
           size: 20,
           font: {
-            size: 22
+            size: 22,
+            font: 'verdana'
           },
           borderWidth: 2,
           shadow: true,
