@@ -561,9 +561,24 @@ function printLeave(graph) {
       var itemLink = {
         from: fromIndex,
         to: toIndex,
-        arrows: 'to'
+        arrows: 'to',
+        width: 1
       };
-      linksJS.push(JSON.stringify(itemLink));
+      if (linksJS.length == 0)
+        linksJS.push(JSON.stringify(itemLink));
+      else {
+        var founded = false;
+        for (var j = 0; j < linksJS.length; j++) {
+          if (linksJS[j].from == itemLink.from && linksJS[j].to == itemLink.to && linksJS[j].arrows == itemLink.arrows) {
+            linksJS[j].width = linksJS[j].width + 1;
+            founded = true;
+          }
+        }
+        if (!founded) {
+          linksJS.push(JSON.stringify(itemLink));
+          founded = false;
+        }
+      }
     }
     linksJS = "[" + linksJS + "]";
     fs.writeFile('links.json', linksJS, 'utf8', function(err) {
