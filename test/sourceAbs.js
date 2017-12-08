@@ -3,6 +3,7 @@ var globall = "si";
 
 function Absoluto(x) {
   var abso = Math.abs(x);
+  var abso2 = Math.abs(x);
   return abso;
 }
 

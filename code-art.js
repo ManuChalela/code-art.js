@@ -571,6 +571,7 @@ function printLeave(graph) {
         for (var j = 0; j < linksJS.length; j++) {
           if (linksJS[j].from == itemLink.from && linksJS[j].to == itemLink.to && linksJS[j].arrows == itemLink.arrows) {
             linksJS[j].width = linksJS[j].width + 1;
+            linksJS[j].id = linksJS[j].id + 1;
             founded = true;
           }
         }
@@ -594,20 +595,12 @@ function printLeave(graph) {
       edgesJS.push(JSON.stringify(itemListET));
 
       var itemListLog = [];
-      // if (externalsTotal[i].count == 1) {
-      //   itemListLog.push(externalsTotal[i].name, externalsTotal[i].count);
-      // } else {
-      //   //itemListLog.push(externalsTotal[i].name, Math.log(externalsTotal[i].count));
-      //   itemListLog.push(externalsTotal[i].name, externalsTotal[i].count);
-      // }
-      // if (externalsTotal[i].count == 1) {
-      //   itemListLog.push(externalsTotal[i].name, externalsTotal[i].count);
-      // } else {
-      //   //itemListLog.push(externalsTotal[i].name, Math.log(externalsTotal[i].count));
-      //   itemListLog.push(externalsTotal[i].name, externalsTotal[i].count);
-      // }
       itemListLog.push(externalsTotal[i].name, 2 + Math.round(Math.log(externalsTotal[i].count)));
-      edgesLogJS.push(JSON.stringify(itemListLog));
+      var indexItemListLog = arrayObjectIndexOf(edgesLogJS, itemListLog, "id");
+      if (indexItemListLog == -1)
+        edgesLogJS.push(JSON.stringify(itemListLog));
+      else edgesLogJS[indexItemListLog].count + 1;
+      //edgesLogJS.push(JSON.stringify(itemListLog));
     }
     var edgesETJS = "[" + edgesJS + "]";
     fs.writeFile('views/edges.json', edgesETJS, 'utf8', function(err) {
