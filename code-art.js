@@ -676,7 +676,9 @@ function printLeave(graph) {
       //var size = Math.round(Math.log(finalListColored[i].count) * 100) / 100;
       itemList.push(finalListColored[i].name, finalListColored[i].count, finalListColored[i].color, finalListColored[i].fontFamily, finalListColored[i].fontWeight);
       //console.log(itemList);
-      itemFinalListJS.push(JSON.stringify(itemList));
+      var indexItemList = arrayObjectIndexOf(itemFinalListJS, itemList, "id");
+      if (indexItemList == -1)
+        itemFinalListJS.push(JSON.stringify(itemList));
     }
     itemFinalListJS = "[" + itemFinalListJS + "]";
     fs.writeFile('views/finalList.json', itemFinalListJS, 'utf8', function(err) {

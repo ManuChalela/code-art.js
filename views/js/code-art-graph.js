@@ -7,10 +7,10 @@ $("#get-nodes").on("click", function() {
         nodes: {
           shape: 'dot',
           size: 20,
-          font: {
-            size: 22,
-            font: 'verdana'
-          },
+          // font: {
+          //   size: 22,
+          //   font: 'verdana'
+          // },
           borderWidth: 2,
           shadow: true,
         },
