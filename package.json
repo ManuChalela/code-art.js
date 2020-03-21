@@ -20,7 +20,12 @@
   },
   "homepage": "https://github.com/ManuChalela/code-art.js#readme",
   "dependencies": {
-    "js2wordcloud": "^1.1.12"
+    "js2wordcloud": "^1.1.12",
+    "uglify-js": ">=2.6.0",
+    "moment": ">=2.19.3",
+    "cached-path-relative": ">=1.0.2",
+    "acorn": ">=5.7.4",
+    "minimist": ">=1.2.2"
   },
   "devDependencies": {
     "browserify": "^14.4.0",
