@@ -23,7 +23,7 @@
     "js2wordcloud": "^1.1.12",
     "uglify-js": ">=2.6.0",
     "moment": ">=2.19.3",
-    "cached-path-relative": ">=1.0.2",
+    "cached-path-relative": ">=1.1.0",
     "acorn": ">=5.7.4",
     "minimist": ">=1.2.2"
   },
@@ -43,7 +43,7 @@
     "vis": "^4.21.0",
     "uglify-js": ">=2.6.0",
     "moment": ">=2.19.3",
-    "cached-path-relative": ">=1.0.2",
+    "cached-path-relative": ">=1.1.0",
     "acorn": ">=5.7.4",
     "minimist": ">=1.2.2"
   }
