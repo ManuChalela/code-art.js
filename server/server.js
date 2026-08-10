@@ -1,21 +1,19 @@
 var express = require("express");
 var app = express();
 var path = require("path");
-var cons = require('consolidate');
 var jsonfile = require('jsonfile');
 var vis = require('vis');
 
 var graphGlobal;
-app.engine('html', cons.swig)
-app.set('view engine', 'html')
-app.use(express.static('./views'));
+var viewsDirectory = path.join(__dirname, '..', 'views');
+app.use(express.static(viewsDirectory));
 
 app.listen(8080, () => {
   console.log("Server started on port 8080. Go to http://localhost:8080");
 });
 
 app.get("/", function(req, res) {
-  res.render('code-art-graph')
+  res.sendFile(path.join(viewsDirectory, 'code-art-graph.html'));
 });
 
 app.get("/getGraph", (req, res) => {
@@ -30,8 +28,8 @@ app.get("/getGraph", (req, res) => {
       parseColor: false
     }
   }
-  var nodes = jsonfile.readFileSync('./nodes.json');
-  var edges = jsonfile.readFileSync('./links.json');
+  var nodes = jsonfile.readFileSync(path.join(__dirname, '..', 'nodes.json'));
+  var edges = jsonfile.readFileSync(path.join(__dirname, '..', 'links.json'));
 
   var graph = {
     nodes: nodes,
@@ -46,7 +44,7 @@ app.get("/getWordCloud", (req, res) => {
   console.log("Getting WordCloud info ");
   //var list = jsonfile.readFileSync('views/edges.json');
   // var list = jsonfile.readFileSync('views/list.json');
-  var list = jsonfile.readFileSync('views/finalList.json');
+  var list = jsonfile.readFileSync(path.join(viewsDirectory, 'finalList.json'));
   res.send(list);
 });
 
