@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "description": "Node module parser that creates a word cloud of code identifiers. ",
   "main": "code-art.js",
-  "scripts": {},
+  "scripts": {
+    "test": "node --test test/smoke.test.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ManuChalela/code-art.js.git"
@@ -28,23 +30,14 @@
     "minimist": ">=1.2.2"
   },
   "devDependencies": {
-    "browserify": "^14.4.0",
-    "consolidate": "^0.14.5",
+    "browserify": "^17.0.1",
     "dom-to-image": "^2.6.0",
     "esprima": "^4.0.0",
     "estraverse": "^4.2.0",
-    "express": "^4.16.2",
-    "fs": "0.0.1-security",
+    "express": "^4.21.2",
     "graph-data-structure": "^1.0.0",
     "jsonfile": "^4.0.0",
-    "path": "^0.12.7",
-    "requirejs": "^2.3.5",
-    "swig": "^1.4.2",
-    "vis": "^4.21.0",
-    "uglify-js": ">=2.6.0",
-    "moment": ">=2.19.3",
-    "cached-path-relative": ">=1.0.2",
-    "acorn": ">=5.7.4",
-    "minimist": ">=1.2.2"
+    "requirejs": "^2.3.7",
+    "vis": "^4.21.0"
   }
 }
